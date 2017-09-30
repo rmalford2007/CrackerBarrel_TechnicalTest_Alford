@@ -21,12 +21,15 @@ public class GameBoard : MonoBehaviour {
 
     private List<List<PegSlotData>> boardArrays; //This holds the initial data set of peg holes in the board. This should be used for initial connectivity of peg holes.
     private HashSet<PegSlotData> allPegSlots; //Hashed set of all slots for easier lookup
+    private Dictionary<PegSlotData, PegSlot> pegTileGameObjects; //Dictionary to links the pegSlotData class to its appropriate world object that is spawned
     //private HashSet<PegSlotData> moveableSlots; //Hashed set of slots. Plan is to only have this contain slots that can still jump
+
+    private PegSlotData activePeg;
 
     private void Awake()
     {
         pegRowHeightChange = Mathf.Sqrt(Mathf.Pow(pegSpacing, 2f) - Mathf.Pow(pegSpacing / 2f, 2f)); //use pythagorean theorem to get the height value
-
+        pegTileGameObjects = new Dictionary<PegSlotData, PegSlot>();
         InitBoard(baseRowPegCount);
 
 
@@ -143,9 +146,7 @@ public class GameBoard : MonoBehaviour {
         float zPos, xPos, yPos;
         if (boardArrays != null)
         {
-
-
-            //All peg graphics should be spawned
+            //All peg graphics should be spawned here
             //Remove first peg to start game (top middle for now) - hardcode classic to see if it works
             if (boardArrays.Count > 0 && boardArrays[0] != null)
                 boardArrays[0][boardArrays[0].Count - 1].SetAsStartSlot();
@@ -180,6 +181,9 @@ public class GameBoard : MonoBehaviour {
                             }
                             else
                                 slotScript.SetSlotData(boardArrays[i][j]);
+
+                            slotScript.TileSelected += OnSelectPeg;
+                            pegTileGameObjects.Add(boardArrays[i][j], slotScript);
                         }
                     }
 
@@ -198,14 +202,13 @@ public class GameBoard : MonoBehaviour {
     /// <param name="checkSlot">The slot data that is doing the jumping.</param>
     /// <param name="checkDirection">The direction to jump in.</param>
     /// <returns>Returns true if it can jump, else false</returns>
-    public bool CanJumpInDirection(PegSlotData checkSlot, PegDirection checkDirection)
+    public PegSlotData CanJumpInDirection(PegSlotData checkSlot, PegDirection checkDirection)
     {
-        CanJumpInDirection(null, PegDirection.RIGHT);
         if(checkSlot != null)
         {
-            return checkSlot.CanJumpInDirection(checkDirection) != null;
+            return checkSlot.CanJumpInDirection(checkDirection);
         }
-        return false;
+        return null;
     }
 
     /// <summary>
@@ -223,12 +226,94 @@ public class GameBoard : MonoBehaviour {
         return false;
     }
 
+    public void OnSelectPeg(PegSlotData selectedSlotData)
+    {
+        //if there is a peg in the slot, activate it, but first deactivate the old peg that was active
+        if(selectedSlotData != null && selectedSlotData.HasPeg())
+        {
+            if (activePeg != null)
+            {
+                activePeg.Deselect();
+            }
+            activePeg = selectedSlotData;
 
+            if(selectedSlotData != null)
+                selectedSlotData.Select();
+            
+        }
+        else if(activePeg != null && selectedSlotData != null)
+        {
+            //There is no peg in this selected slot, but we already have an active peg, this means we are dropping the peg in this slot
+
+            //Evaluate the jump direction to see if we can process the jump request
+            PegDirection jumpDirection = EvaluateDirection(activePeg, selectedSlotData);
+            //If this is a valid direction, verify that we can jump here
+            if(jumpDirection != PegDirection.INVALID)
+            {
+                PegSlotData checkJumpSlot = CanJumpInDirection(activePeg, jumpDirection);
+                
+                //Check the landing position in the jumpDirection, if the returned position is equal to our clicked position, then this is a valid jump
+                if (checkJumpSlot == selectedSlotData)
+                {
+                    if (DoJumpInDirection(activePeg, jumpDirection))
+                    {
+                        //Finished jumping deselect the tiles we used
+                        activePeg.Deselect();
+                        activePeg = null;
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Compares the angle from actionSlot to destinationSlot to get an equivalent PegDirection enum value.
+    /// </summary>
+    /// <param name="actionSlot">Jumping peg slot</param>
+    /// <param name="destinationSlot">Landing peg slot</param>
+    /// <returns></returns>
+    public PegDirection EvaluateDirection(PegSlotData actionSlot, PegSlotData destinationSlot)
+    {
+        if(actionSlot != null && pegTileGameObjects.ContainsKey(actionSlot) && destinationSlot != null && pegTileGameObjects.ContainsKey(destinationSlot))
+        {
+            //Both slots are in the dictionary, get the the transform position vectors from each
+            Vector3 directionVector = pegTileGameObjects[destinationSlot].transform.position - pegTileGameObjects[actionSlot].transform.position;
+            Vector3 rightVector = pegTileGameObjects[actionSlot].transform.right;
+            Vector3 upAxis = pegTileGameObjects[actionSlot].transform.up;
+
+            float deltaAngle = Vector3.SignedAngle(directionVector, rightVector, upAxis);
+            
+            if ((deltaAngle >= -30f && deltaAngle <= 0f) || (deltaAngle >= 0f && deltaAngle < 30f))
+            {
+                return PegDirection.RIGHT;
+            }
+            else if (deltaAngle >= 30f && deltaAngle < 90f)
+            {
+                return PegDirection.TOP_RIGHT;
+            }
+            else if (deltaAngle >= 90f && deltaAngle < 150f)
+            {
+                return PegDirection.TOP_LEFT;
+            }
+            else if (deltaAngle >= 150f && deltaAngle > -150f)
+            {
+                return PegDirection.LEFT;
+            }
+            else if (deltaAngle >= -150f && deltaAngle < -90f)
+            {
+                return PegDirection.BOTTOM_LEFT;
+            }
+            else if (deltaAngle >= -90f && deltaAngle < -30f)
+            {
+                return PegDirection.BOTTOM_RIGHT;
+            }
+
+        }
+        return PegDirection.INVALID;
+    }
 	
 	// Update is called once per frame
 	void Update () {
-        //Remove first peg to start game (top middle for now)
-        //if (boardArrays.Count > 0 && boardArrays[0] != null)
-        //    boardArrays[0][boardArrays[0].Count - 1].SetAsStartSlot();
+
     }
 }

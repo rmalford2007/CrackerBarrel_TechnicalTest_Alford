@@ -13,6 +13,7 @@ public class PegData
 
 public delegate void EmptySlotHook();
 public delegate void PegDataFuncHook(PegData pegColorData);
+public delegate void PegSlotFuncHook(PegSlotData changingSlotData);
 
 
 /// <summary>
@@ -25,7 +26,9 @@ public class PegSlotData{
     private PegSlotData[] pegNeighbors; //This should be all the neighbors of this peg slot, even outside of the game board (null values). Index lookup should be done with enum values for directions
 
     public event PegDataFuncHook PegAdded; //Whenever a peg is added to this slot, call this event
-    public event EmptySlotHook PegRemoved; //Whenever a page is removed from this slot, call this event
+    public event EmptySlotHook PegRemoved; //Whenever a peg is removed from this slot, call this event
+    public event EmptySlotHook PegSelected; //When this peg is selected
+    public event EmptySlotHook PegDeselected; //when this peg is de-selected
 
 	public PegSlotData()
     {
@@ -105,7 +108,7 @@ public class PegSlotData{
         {
             //There is a peg in jumpDirection
 
-            PegSlotData neighborData = pegNeighbors[(int)jumpDirection].GetNeighbor(jumpDirection);
+            PegSlotData neighborData = GetNeighbor(jumpDirection);
             
             //verify that pegslot on the other side of the neighbor is empty
             if (neighborData != null && neighborData.HasPegInDirection(jumpDirection) == false)
@@ -193,6 +196,30 @@ public class PegSlotData{
 
         //This slot is the empty start slot
         RemovePeg();
+    }
+
+    /// <summary>
+    /// Select event for this peg slot
+    /// </summary>
+    public void Select()
+    {
+        if(PegSelected != null)
+        {
+            PegSelected.Invoke();
+        }
+    }
+
+    /// <summary>
+    /// Deselect event for this peg slot
+    /// </summary>
+    public void Deselect()
+    {
+        if(PegDeselected != null)
+        {
+            if(pegInSlot != null)
+                SetPegData(pegInSlot);
+            PegDeselected.Invoke();
+        }
     }
 
     /// <summary>

@@ -6,8 +6,12 @@ public class PegSlot : MonoBehaviour {
 
     public AnimationCurve blinkHoverCurve;
     public float hoverMultiplier = 3f;
+
+    public event PegSlotFuncHook TileSelected;
+
     private PegSlotData sourceSlotData; //The logic for this peg. Specifies if a peg is visually in this slot or not. 
 
+    private Renderer pegHoldRenderer; //This is the renderer for the tile of this peg slot. 
     private GameObject pegObject; //The child object attached to this peg slot. This should be a 3d model of a peg
     private Renderer pegRenderer;
 
@@ -17,10 +21,19 @@ public class PegSlot : MonoBehaviour {
     {
         HOVER,
         DRAG,
-        DEFAULT
+        DEFAULT,
+        SELECTED
+    }
+
+    public enum TileAction
+    {
+        DEFAULT,
+        LANDING,
+        DISABLE,
     }
 
     private MouseState currentMouseState = MouseState.DEFAULT;
+    private TileAction currentTileState = TileAction.DEFAULT;
 
     private void Awake()
     {
@@ -35,7 +48,9 @@ public class PegSlot : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(pegObject.activeSelf && currentMouseState != MouseState.DEFAULT)
+
+        //Peg specific coloring updates
+		if(pegObject.activeSelf && currentMouseState != MouseState.DEFAULT && currentMouseState != MouseState.SELECTED)
         {
 
             if (currentMouseState == MouseState.DRAG)
@@ -51,7 +66,25 @@ public class PegSlot : MonoBehaviour {
             tempColor.a = blinkHoverCurve.Evaluate(elapsedHighlightTime);
             pegRenderer.material.color = tempColor;
         }
+
+        //Peg slot specific updates
+        if(pegObject.activeSelf == false)
+        {
+            //This is the color animation for showing landable locations when a peg is selected
+            if(currentTileState == TileAction.LANDING)
+            {
+
+            }
+
+            //This is the color animation for showing non landable locations when a peg is selected.
+            if(currentTileState == TileAction.DISABLE)
+            {
+
+            }
+        }
 	}
+
+
 
     private void OnDestroy()
     {
@@ -74,6 +107,8 @@ public class PegSlot : MonoBehaviour {
         {
             sourceSlotData.PegAdded += PegAdded;
             sourceSlotData.PegRemoved += PegRemoved;
+            sourceSlotData.PegSelected += OnPegSlotSelected;
+            sourceSlotData.PegDeselected += OnPegSlotDeselected;
         }
     }
 
@@ -83,8 +118,27 @@ public class PegSlot : MonoBehaviour {
         {
             sourceSlotData.PegAdded -= PegAdded;
             sourceSlotData.PegRemoved -= PegRemoved;
+            sourceSlotData.PegSelected -= OnPegSlotSelected;
+            sourceSlotData.PegDeselected -= OnPegSlotDeselected;
         }
     }
+
+    void OnPegSlotSelected()
+    {
+        //When this slot is selected, only change coloring of the peg in this slot
+        if(pegObject != null && pegObject.activeSelf && pegRenderer != null)
+        {
+            pegRenderer.material.color = Color.green;
+            currentMouseState = MouseState.SELECTED;
+        }
+    }
+
+    void OnPegSlotDeselected()
+    {
+
+    }
+
+
 
     /// <summary>
     /// Hook for updating the peg in this slot and activating it.
@@ -103,8 +157,6 @@ public class PegSlot : MonoBehaviour {
                 pegRenderer.material.color = pegInformation.pegColor;
             }
             if(pegObject != null && pegObject.activeSelf == false)
-                Debug.Log("SetActive");
-            if (pegObject != null)
                 pegObject.SetActive(true);
         }
     }
@@ -114,7 +166,6 @@ public class PegSlot : MonoBehaviour {
     /// </summary>
     void PegRemoved()
     {
-        Debug.Log("Peg Removed");
         if (pegObject != null)
             pegObject.SetActive(false);
     }
@@ -134,6 +185,8 @@ public class PegSlot : MonoBehaviour {
 
     private void OnMouseEnter()
     {
+       
+
         //On enter, highlight renderer object
         if (currentMouseState != MouseState.DRAG)
         {
@@ -145,7 +198,12 @@ public class PegSlot : MonoBehaviour {
 
     private void OnMouseDown()
     {
-        currentMouseState = MouseState.DRAG;
+        //Tell subscribers we are clicking this tile
+        if (TileSelected != null)
+        {
+            TileSelected.Invoke(sourceSlotData);
+        }
+        //currentMouseState = MouseState.DRAG;
     }
 
     private void OnMouseExit()
