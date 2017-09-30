@@ -3,15 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
+/// Holds information about an individual peg. Color, game object transform when existing in the world.
+/// </summary>
+[System.Serializable]
+public class PegData
+{
+    public Color pegColor = Color.blue;
+    public Transform pegTransform;
+}
+
+/// <summary>
 /// Each peg slot of the board is represented logically by this class. Should hold connections to its neighbors, and functions to sync neighbor changes.
 /// </summary>
 [System.Serializable]
 public class PegSlotData{
 
+    [SerializeField]
+    private PegData pegInSlot; //Specifies if there is a peg in this slot
     private PegSlotData[] pegNeighbors; //This should be all the neighbors of this peg slot, even outside of the game board (null values). Index lookup should be done with enum values for directions
 
 	public PegSlotData()
     {
+        //Default to have a peg in the slot when created.
+        pegInSlot = new PegData();
+
         //Always static 6, refernce types default to null - specifies off the board directions
         pegNeighbors = new PegSlotData[6];
     }
@@ -38,14 +53,119 @@ public class PegSlotData{
     }
 
     /// <summary>
+    /// Check if this slot has a peg in it. Null is an empty slot.
+    /// </summary>
+    /// <returns>True for peg in slot.</returns>
+    public bool HasPeg()
+    {
+        return pegInSlot != null;
+    }
+
+    /// <summary>
+    /// Check if there is a peg in the nearby slot based on the checkDirection.
+    /// </summary>
+    /// <param name="checkDirection">The direction to check.</param>
+    /// <returns>True if there is peg in checked slot.</returns>
+    public bool HasPegInDirection(PegDirection checkDirection)
+    {
+        if (pegNeighbors != null && checkDirection != PegDirection.INVALID && pegNeighbors[(int)checkDirection] != null)
+        {
+            //Return the value of HasPeg function of the peg in checkDirection
+            return pegNeighbors[(int)checkDirection].HasPeg();
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Returns the neighbor in the passed in direction.
+    /// </summary>
+    /// <param name="neighborDirection">The direction of the neighbor you need.</param>
+    /// <returns>Neighbor PegSlotData class... or null</returns>
+    public PegSlotData GetNeighbor(PegDirection neighborDirection)
+    {
+        if (neighborDirection != PegDirection.INVALID)
+            return pegNeighbors[(int)neighborDirection];
+        return null;
+    }
+
+    /// <summary>
+    /// Queries whether or not we can jump this peg in a direction. To jump a peg, there needs to be a peg in the nearby slot and an empty slot on the other side of the nearby peg.
+    /// </summary>
+    /// <param name="jumpDirection">Direction to check for jumping.</param>
+    /// <returns>Returns the peg slot we can jump to. Else null.</returns>
+    public PegSlotData CanJumpInDirection(PegDirection jumpDirection)
+    {
+        //verify the immediate neighbor in jumpDirection is holding a peg
+        if (HasPegInDirection(jumpDirection))
+        {
+            //There is a peg in jumpDirection
+
+            PegSlotData neighborData = pegNeighbors[(int)jumpDirection].GetNeighbor(jumpDirection);
+            
+            //verify that pegslot on the other side of the neighbor is empty
+            if (neighborData != null && neighborData.HasPegInDirection(jumpDirection) == false)
+            {
+                return neighborData.GetNeighbor(jumpDirection);
+            }
+        }
+        //can't jump
+        return null;
+    }
+
+    /// <summary>
+    /// Jump a peg in jump direction if checks pass. Remove the jumped peg. Empty out the slot we are leaving.
+    /// </summary>
+    /// <param name="jumpDirection">Direction to jump.</param>
+    /// <returns>True if successful</returns>
+    public bool DoJumpInDirection(PegDirection jumpDirection)
+    {
+        //Verify that we can jump in this direction
+        PegSlotData jumpLocation = CanJumpInDirection(jumpDirection);
+        if (jumpLocation != null)
+        {
+            //Place the jumping tee in the empty space
+            MovePeg(jumpLocation);
+
+            //Remove the jumped tee
+            GetNeighbor(jumpDirection).RemovePeg(); //already many checks deep, assume there is a neighbor peg, and remove it
+            return true;
+        }
+        return false;
+    }
+    
+    /// <summary>
+    /// Move the peg from this classes pegInSlot to the moveTo classes pegInSlot. Set to null when moving. Assume there is no peg in the moveTo slot.
+    /// </summary>
+    /// <param name="moveTo">The empty slot we are moving the peg to.</param>
+    /// <returns>True if successful</returns>
+    private bool MovePeg(PegSlotData moveTo)
+    {
+        if(moveTo != null)
+        {
+            moveTo.pegInSlot = pegInSlot;
+            pegInSlot = null;
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Set the peg in this slot to null. May need to broadcast a change here for graphics.
+    /// </summary>
+    private void RemovePeg()
+    {
+        pegInSlot = null;
+    }
+
+    /// <summary>
     /// Get's the opposite direction enum and returns it. 
     /// Left returns right.
-    /// Top Left return Bottom Right
+    /// Top Left returns Bottom Right
     /// Top Right returns bottom left. 
     /// And the opposite of each...
     /// </summary>
     /// <param name="val">The direction to get the opposite of.</param>
-    /// <returns></returns>
+    /// <returns>The opposite direction enum</returns>
     public PegDirection GetOppositeDirection(PegDirection val)
     {
         switch(val)

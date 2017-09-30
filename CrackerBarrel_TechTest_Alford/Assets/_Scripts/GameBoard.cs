@@ -89,8 +89,10 @@ public class GameBoard : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+
 	    if(boardArrays != null)
         {
+            //Loop through the board array we created and spawn objects in the world for each hole
             for(int i = 0; i < boardArrays.Count; i++)
             {
                 for(int j = 0; j < boardArrays[i].Count; j++)
@@ -100,6 +102,37 @@ public class GameBoard : MonoBehaviour {
             }
         }
 	}
+
+    /// <summary>
+    /// Check if the passed in peg can jump in checkDirection. Imagine using this for helper interface items (Blink available locations to jump to when holding the peg)
+    /// </summary>
+    /// <param name="checkSlot">The slot data that is doing the jumping.</param>
+    /// <param name="checkDirection">The direction to jump in.</param>
+    /// <returns>Returns true if it can jump, else false</returns>
+    public bool CanJumpInDirection(PegSlotData checkSlot, PegDirection checkDirection)
+    {
+        CanJumpInDirection(null, PegDirection.RIGHT);
+        if(checkSlot != null)
+        {
+            return checkSlot.CanJumpInDirection(checkDirection) != null;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Jump the passed in peg in the noted jumpDirection. Does a valid jump check to verify it can jump.
+    /// </summary>
+    /// <param name="checkSlot">The slot to move.</param>
+    /// <param name="jumpDirection">The direction to move</param>
+    /// <returns>True if successful</returns>
+    public bool DoJumpInDirection(PegSlotData checkSlot, PegDirection jumpDirection)
+    {
+        if (checkSlot != null)
+        {
+            return checkSlot.DoJumpInDirection(jumpDirection);
+        }
+        return false;
+    }
 	
 	// Update is called once per frame
 	void Update () {
