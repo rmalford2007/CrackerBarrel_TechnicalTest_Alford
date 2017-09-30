@@ -12,12 +12,17 @@ public class GameBoard : MonoBehaviour {
     public int baseRowPegCount = 5;
 
     private List<List<PegSlotData>> boardArrays; //This holds the initial data set of peg holes in the board. This should be used for initial connectivity of peg holes.
+    private HashSet<PegSlotData> allPegSlots; //Hashed set of all slots for easier lookup
+    //private HashSet<PegSlotData> moveableSlots; //Hashed set of slots. Plan is to only have this contain slots that can still jump
 
     private void Awake()
     {
 
         InitBoard(baseRowPegCount);
 
+
+        //Init the moveable slots
+        //moveableSlots = new HashSet<PegSlotData>();
     }
 
     /// <summary>
@@ -28,6 +33,8 @@ public class GameBoard : MonoBehaviour {
     {
         //Initialize 2d array - variable list sizes
         boardArrays = new List<List<PegSlotData>>();
+
+        allPegSlots = new HashSet<PegSlotData>();
 
         for (int i = 0; i < pegCount; i++)
         {
@@ -60,6 +67,7 @@ public class GameBoard : MonoBehaviour {
             for (int j = 0; j < pegCount - i; j++)
             {
                 boardArrays[i].Add(new PegSlotData());
+                allPegSlots.Add(boardArrays[i][j]); //Add the new slot to the all hashset
             }
         }
 
@@ -85,6 +93,39 @@ public class GameBoard : MonoBehaviour {
                     boardArrays[i][j + 1].ConnectPegNeighbor(boardArrays[i + 1][j], PegDirection.BOTTOM_RIGHT);
             }
         }
+    }
+
+    /// <summary>
+    /// Check all pegs if there are any moves left. Returns true if there is at least 1 move. TODO: In a scalable format this may be slow.
+    /// </summary>
+    public bool Check_CanMoveAll()
+    {
+        //Check all slots if they can move
+        foreach(PegSlotData slotData in allPegSlots)
+        {
+            if(slotData.CanJumpInAnyDirection())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Query how many pegs are left. Return an int amount of pegs remaining. TODO: In a scalable format this may be slow.
+    /// </summary>
+    public int Check_CountScore()
+    {
+        int remainingPegs = 0;
+        //Check all slots if they contain a peg
+        foreach (PegSlotData slotData in allPegSlots)
+        {
+            if (slotData.HasPeg())
+            {
+                remainingPegs++;
+            }
+        }
+        return remainingPegs;
     }
 
     // Use this for initialization
@@ -133,6 +174,8 @@ public class GameBoard : MonoBehaviour {
         }
         return false;
     }
+
+
 	
 	// Update is called once per frame
 	void Update () {

@@ -157,6 +157,17 @@ public class PegSlotData{
         pegInSlot = null;
     }
 
+    public bool CanJumpInAnyDirection()
+    {
+        //Look in all directions and return true if we can jump in any of the directions
+        for(int i = 0; i < 6; i++)
+        {
+            if (CanJumpInDirection((PegDirection)i) != null)
+                return true;
+        }
+        return false;
+    }
+
     /// <summary>
     /// Get's the opposite direction enum and returns it. 
     /// Left returns right.
