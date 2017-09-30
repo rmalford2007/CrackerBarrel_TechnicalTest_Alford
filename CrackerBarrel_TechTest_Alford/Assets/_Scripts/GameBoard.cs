@@ -11,12 +11,21 @@ public class GameBoard : MonoBehaviour {
     [Tooltip("This number should be the number of pegs in the longest row of the board. In a classic game this should be 5 pegs. Changing this value will not resize the board during play, change this in edit mode.\nBounds: 5, 20 inclusive")]
     public int baseRowPegCount = 5;
 
+    [Range(.5f, 10f)]
+    [Tooltip("The distance between each peg.")]
+    public float pegSpacing = 1f; //the horizontal spacing between peg holes, this is peg center to peg center distance. Each level will be staggered over by half peg spacing
+
+    public GameObject pegSlotPrefab;
+
+    private float pegRowHeightChange = 1f; //The spacing to move each row of holes to. Should be half way between holes beneath them, but still pegSpacing away from other holes.
+
     private List<List<PegSlotData>> boardArrays; //This holds the initial data set of peg holes in the board. This should be used for initial connectivity of peg holes.
     private HashSet<PegSlotData> allPegSlots; //Hashed set of all slots for easier lookup
     //private HashSet<PegSlotData> moveableSlots; //Hashed set of slots. Plan is to only have this contain slots that can still jump
 
     private void Awake()
     {
+        pegRowHeightChange = Mathf.Sqrt(Mathf.Pow(pegSpacing, 2f) - Mathf.Pow(pegSpacing / 2f, 2f)); //use pythagorean theorem to get the height value
 
         InitBoard(baseRowPegCount);
 
@@ -130,19 +139,58 @@ public class GameBoard : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-
-	    if(boardArrays != null)
+        Vector3 nextPosition = Vector3.zero;
+        float zPos, xPos, yPos;
+        if (boardArrays != null)
         {
+
+
+            //All peg graphics should be spawned
+            //Remove first peg to start game (top middle for now) - hardcode classic to see if it works
+            if (boardArrays.Count > 0 && boardArrays[0] != null)
+                boardArrays[0][boardArrays[0].Count - 1].SetAsStartSlot();
+
             //Loop through the board array we created and spawn objects in the world for each hole
-            for(int i = 0; i < boardArrays.Count; i++)
+            //for each column
+            for (int i = 0; i < boardArrays.Count; i++)
             {
-                for(int j = 0; j < boardArrays[i].Count; j++)
+                xPos = -(boardArrays.Count) / 2f * pegSpacing + i * pegSpacing;
+                zPos = -boardArrays.Count / 2f * pegRowHeightChange;
+                //for each row
+                for (int j = 0; j < boardArrays[i].Count; j++)
                 {
-                    Debug.Log("Creating peg hole game object.");
+                    
+                    xPos += pegSpacing / 2f;
+                    //zPos = -((boardArrays.Count) / 2f - i) * pegRowHeightChange + pegRowHeightChange / 2f;
+                    //xPos = -(boardArrays[i].Count / 2f - j) * pegSpacing + pegSpacing / 2f;
+                    
+                    yPos = transform.position.y;
+                    nextPosition.Set(xPos, yPos, zPos);
+
+                    GameObject createdSlot = Instantiate(pegSlotPrefab, nextPosition, Quaternion.identity, transform);
+                    
+                    if(createdSlot != null)
+                    {
+                        PegSlot slotScript = createdSlot.GetComponent<PegSlot>();
+                        if(slotScript != null)
+                        {
+                            if (i == 0 && j == boardArrays[i].Count - 1)
+                            {
+                                slotScript.SetSlotData(boardArrays[i][j], true);
+                            }
+                            else
+                                slotScript.SetSlotData(boardArrays[i][j]);
+                        }
+                    }
+
+                    //Move next position values
+                    zPos += pegRowHeightChange;
                 }
             }
         }
-	}
+
+
+    }
 
     /// <summary>
     /// Check if the passed in peg can jump in checkDirection. Imagine using this for helper interface items (Blink available locations to jump to when holding the peg)
@@ -179,6 +227,8 @@ public class GameBoard : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        //Remove first peg to start game (top middle for now)
+        //if (boardArrays.Count > 0 && boardArrays[0] != null)
+        //    boardArrays[0][boardArrays[0].Count - 1].SetAsStartSlot();
+    }
 }

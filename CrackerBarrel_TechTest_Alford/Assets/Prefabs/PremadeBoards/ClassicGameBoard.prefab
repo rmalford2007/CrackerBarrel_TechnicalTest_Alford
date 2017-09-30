@@ -51,3 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 529d10eb2572ae944a7d7bc2d7cda221, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseRowPegCount: 5
+  pegSpacing: 0.5
+  pegSlotPrefab: {fileID: 1486990520572756, guid: b0074e525329e5649b3db2de0a59e512,
+    type: 2}

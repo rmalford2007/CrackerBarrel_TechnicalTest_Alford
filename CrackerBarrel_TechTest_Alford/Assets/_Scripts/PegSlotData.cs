@@ -5,22 +5,27 @@ using UnityEngine;
 /// <summary>
 /// Holds information about an individual peg. Color, game object transform when existing in the world.
 /// </summary>
-[System.Serializable]
 public class PegData
 {
     public Color pegColor = Color.blue;
     public Transform pegTransform;
 }
 
+public delegate void EmptySlotHook();
+public delegate void PegDataFuncHook(PegData pegColorData);
+
+
 /// <summary>
 /// Each peg slot of the board is represented logically by this class. Should hold connections to its neighbors, and functions to sync neighbor changes.
 /// </summary>
-[System.Serializable]
 public class PegSlotData{
 
     [SerializeField]
     private PegData pegInSlot; //Specifies if there is a peg in this slot
     private PegSlotData[] pegNeighbors; //This should be all the neighbors of this peg slot, even outside of the game board (null values). Index lookup should be done with enum values for directions
+
+    public event PegDataFuncHook PegAdded; //Whenever a peg is added to this slot, call this event
+    public event EmptySlotHook PegRemoved; //Whenever a page is removed from this slot, call this event
 
 	public PegSlotData()
     {
@@ -132,6 +137,12 @@ public class PegSlotData{
         }
         return false;
     }
+
+    public void SetPegData(PegData setData)
+    {
+        pegInSlot = setData;
+        OnPegAdded();
+    }
     
     /// <summary>
     /// Move the peg from this classes pegInSlot to the moveTo classes pegInSlot. Set to null when moving. Assume there is no peg in the moveTo slot.
@@ -142,8 +153,8 @@ public class PegSlotData{
     {
         if(moveTo != null)
         {
-            moveTo.pegInSlot = pegInSlot;
-            pegInSlot = null;
+            moveTo.SetPegData(pegInSlot);
+            RemovePeg();
             return true;
         }
         return false;
@@ -155,17 +166,33 @@ public class PegSlotData{
     private void RemovePeg()
     {
         pegInSlot = null;
+        OnPegRemoved();
     }
 
+    /// <summary>
+    /// Look in all directions and return true if we can jump in any of the directions
+    /// </summary>
+    /// <returns></returns>
     public bool CanJumpInAnyDirection()
     {
-        //Look in all directions and return true if we can jump in any of the directions
         for(int i = 0; i < 6; i++)
         {
             if (CanJumpInDirection((PegDirection)i) != null)
                 return true;
         }
         return false;
+    }
+
+    public PegData GetPegColorData()
+    {
+        return pegInSlot;
+    }
+
+    public void SetAsStartSlot()
+    {
+
+        //This slot is the empty start slot
+        RemovePeg();
     }
 
     /// <summary>
@@ -196,6 +223,28 @@ public class PegSlotData{
             default:
                 Debug.LogError("PegSlot.GetOppositeDirection() - Attempting to query INVALID direction enum.");
                 return PegDirection.INVALID;
+        }
+    }
+
+    /// <summary>
+    /// Event occurs when a peg is added to this slot.
+    /// </summary>
+    void OnPegAdded()
+    {
+        if(PegAdded != null)
+        {
+            PegAdded.Invoke(pegInSlot);
+        }
+    }
+
+    /// <summary>
+    /// Event occurs when a peg is removed from this slot
+    /// </summary>
+    void OnPegRemoved()
+    {
+        if(PegRemoved != null)
+        {
+            PegRemoved.Invoke();
         }
     }
 }
