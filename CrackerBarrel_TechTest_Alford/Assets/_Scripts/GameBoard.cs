@@ -47,7 +47,7 @@ public class GameBoard : MonoBehaviour {
 
         for (int i = 0; i < pegCount; i++)
         {
-            boardArrays.Add(new List<PegSlotData>(5 - i));
+            boardArrays.Add(new List<PegSlotData>(pegCount - i));
         }
 
         //Loop through and add peg slots
