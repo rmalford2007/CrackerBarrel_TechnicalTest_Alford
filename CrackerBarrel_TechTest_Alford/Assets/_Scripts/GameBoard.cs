@@ -11,7 +11,7 @@ public class GameBoard : MonoBehaviour {
     [Tooltip("This number should be the number of pegs in the longest row of the board. In a classic game this should be 5 pegs. Changing this value will not resize the board during play, change this in edit mode.\nBounds: 5, 20 inclusive")]
     public int baseRowPegCount = 5;
 
-    private List<List<PegSlot>> boardArrays; //This holds the initial data set of peg holes in the board. This should be used for initial connectivity of peg holes.
+    private List<List<PegSlotData>> boardArrays; //This holds the initial data set of peg holes in the board. This should be used for initial connectivity of peg holes.
 
     private void Awake()
     {
@@ -27,11 +27,11 @@ public class GameBoard : MonoBehaviour {
     private void InitBoard(int pegCount)
     {
         //Initialize 2d array - variable list sizes
-        boardArrays = new List<List<PegSlot>>();
+        boardArrays = new List<List<PegSlotData>>();
 
         for (int i = 0; i < pegCount; i++)
         {
-            boardArrays.Add(new List<PegSlot>(5 - i));
+            boardArrays.Add(new List<PegSlotData>(5 - i));
         }
 
         //Loop through and add peg slots
@@ -59,7 +59,7 @@ public class GameBoard : MonoBehaviour {
             //Add variable amount of peg holes depending on column index (subtract the index i from the baseRowPegCount should get a 5, 4, 3, 2, 1 count that we need and scalable to higher values
             for (int j = 0; j < pegCount - i; j++)
             {
-                boardArrays[i].Add(new PegSlot());
+                boardArrays[i].Add(new PegSlotData());
             }
         }
 

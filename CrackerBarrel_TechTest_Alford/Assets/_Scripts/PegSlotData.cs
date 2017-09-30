@@ -6,14 +6,14 @@ using UnityEngine;
 /// Each peg slot of the board is represented logically by this class. Should hold connections to its neighbors, and functions to sync neighbor changes.
 /// </summary>
 [System.Serializable]
-public class PegSlot{
+public class PegSlotData{
 
-    private PegSlot[] pegNeighbors; //This should be all the neighbors of this peg slot, even outside of the game board (null values). Index lookup should be done with enum values for directions
+    private PegSlotData[] pegNeighbors; //This should be all the neighbors of this peg slot, even outside of the game board (null values). Index lookup should be done with enum values for directions
 
-	public PegSlot()
+	public PegSlotData()
     {
         //Always static 6, refernce types default to null - specifies off the board directions
-        pegNeighbors = new PegSlot[6];
+        pegNeighbors = new PegSlotData[6];
     }
 
     /// <summary>
@@ -22,7 +22,7 @@ public class PegSlot{
     /// <param name="connectingNeighbor">Can be null.</param>
     /// <param name="neighborDirection">Should be direction noted in the enum list.</param>
     /// <param name="connectOppositeAfter">Optional bool to specify a two way connection, defaults to true</param>
-    public void ConnectPegNeighbor(PegSlot connectingNeighbor, PegDirection neighborDirection, bool connectOppositeAfter=true)
+    public void ConnectPegNeighbor(PegSlotData connectingNeighbor, PegDirection neighborDirection, bool connectOppositeAfter=true)
     {
         if (neighborDirection != PegDirection.INVALID)
         {
