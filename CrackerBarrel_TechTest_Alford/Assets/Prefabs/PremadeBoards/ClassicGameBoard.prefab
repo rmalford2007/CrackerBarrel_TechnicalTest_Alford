@@ -53,5 +53,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseRowPegCount: 5
   pegSpacing: 0.5
-  pegSlotPrefab: {fileID: 1486990520572756, guid: b0074e525329e5649b3db2de0a59e512,
+  pegSlotPrefab: {fileID: 1394270174507022, guid: b0074e525329e5649b3db2de0a59e512,
     type: 2}
