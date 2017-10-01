@@ -35,9 +35,12 @@ public class PegSlot : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        //Leave early if controls are disabled
+        if (!GameManager.IsControlEnabled())
+            return;
 
         //Peg specific coloring updates
-		if(pegObject.activeSelf && currentMouseState != PegMouseState.DEFAULT && currentMouseState != PegMouseState.SELECTED)
+        if (pegObject.activeSelf && currentMouseState != PegMouseState.DEFAULT && currentMouseState != PegMouseState.SELECTED)
         {
 
             if (currentMouseState == PegMouseState.DRAG)
@@ -166,13 +169,19 @@ public class PegSlot : MonoBehaviour {
 
     private void OnMouseOver()
     {
+        //Leave early if controls are disabled
+        if (!GameManager.IsControlEnabled())
+            return;
+
         if(currentMouseState != PegMouseState.DRAG)
             currentMouseState = PegMouseState.HOVER;
     }
 
     private void OnMouseEnter()
     {
-       
+        //Leave early if controls are disabled
+        if (!GameManager.IsControlEnabled())
+            return;
 
         //On enter, highlight renderer object
         if (currentMouseState != PegMouseState.DRAG)
@@ -185,6 +194,10 @@ public class PegSlot : MonoBehaviour {
 
     private void OnMouseDown()
     {
+        //Leave early if controls are disabled
+        if (!GameManager.IsControlEnabled())
+            return;
+
         //Tell subscribers we are clicking this tile
         if (TileSelected != null)
         {
@@ -195,6 +208,10 @@ public class PegSlot : MonoBehaviour {
 
     private void OnMouseExit()
     {
+        //Leave early if controls are disabled
+        if (!GameManager.IsControlEnabled())
+            return;
+
         if (currentMouseState != PegMouseState.DRAG)
         {
             currentMouseState = PegMouseState.DEFAULT;
@@ -204,6 +221,10 @@ public class PegSlot : MonoBehaviour {
 
     private void OnMouseUp()
     {
+        //Leave early if controls are disabled
+        if (!GameManager.IsControlEnabled())
+            return;
+
         currentMouseState = PegMouseState.DEFAULT;
         ResetAlpha();
     }

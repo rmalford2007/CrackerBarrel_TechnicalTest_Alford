@@ -193,4 +193,4 @@ MonoBehaviour:
     m_PreInfinity: 0
     m_PostInfinity: 0
     m_RotationOrder: 0
-  hoverMultiplier: 3
+  hoverMultiplier: 1
