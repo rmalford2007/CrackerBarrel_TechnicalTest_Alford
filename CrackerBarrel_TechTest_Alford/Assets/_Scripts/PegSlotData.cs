@@ -9,12 +9,19 @@ public class PegData
 {
     public Color pegColor = Color.blue;
     public Transform pegTransform;
+
+    public PegData()
+    {
+        pegTransform = null;
+        pegColor = Color.blue;
+    }
+
+    public PegData(Color _pegColor)
+    {
+        pegTransform = null;
+        pegColor = _pegColor;
+    }
 }
-
-public delegate void EmptySlotHook();
-public delegate void PegDataFuncHook(PegData pegColorData);
-public delegate void PegSlotFuncHook(PegSlotData changingSlotData);
-
 
 /// <summary>
 /// Each peg slot of the board is represented logically by this class. Should hold connections to its neighbors, and functions to sync neighbor changes.
@@ -25,10 +32,10 @@ public class PegSlotData{
     private PegData pegInSlot; //Specifies if there is a peg in this slot
     private PegSlotData[] pegNeighbors; //This should be all the neighbors of this peg slot, even outside of the game board (null values). Index lookup should be done with enum values for directions
 
-    public event PegDataFuncHook PegAdded; //Whenever a peg is added to this slot, call this event
-    public event EmptySlotHook PegRemoved; //Whenever a peg is removed from this slot, call this event
-    public event EmptySlotHook PegSelected; //When this peg is selected
-    public event EmptySlotHook PegDeselected; //when this peg is de-selected
+    public event PegData_Event PegAdded; //Whenever a peg is added to this slot, call this event
+    public event Void_Event PegRemoved; //Whenever a peg is removed from this slot, call this event
+    public event Void_Event PegSelected; //When this peg is selected
+    public event Void_Event PegDeselected; //when this peg is de-selected
 
 	public PegSlotData()
     {
@@ -274,18 +281,4 @@ public class PegSlotData{
             PegRemoved.Invoke();
         }
     }
-}
-
-/// <summary>
-/// This should specify the direction for peg related queries. Should only be 0 through 5, with -1 being invalid for error checking
-/// </summary>
-public enum PegDirection
-{
-    INVALID= -1,
-    RIGHT=0,
-    BOTTOM_RIGHT = 1,
-    BOTTOM_LEFT = 2,
-    LEFT = 3,
-    TOP_LEFT = 4,
-    TOP_RIGHT = 5,
 }

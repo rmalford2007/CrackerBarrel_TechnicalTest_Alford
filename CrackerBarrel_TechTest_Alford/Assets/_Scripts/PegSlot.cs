@@ -7,7 +7,7 @@ public class PegSlot : MonoBehaviour {
     public AnimationCurve blinkHoverCurve;
     public float hoverMultiplier = 3f;
 
-    public event PegSlotFuncHook TileSelected;
+    public event PegSlotData_Event TileSelected;
 
     private PegSlotData sourceSlotData; //The logic for this peg. Specifies if a peg is visually in this slot or not. 
 
@@ -17,22 +17,9 @@ public class PegSlot : MonoBehaviour {
 
     private float elapsedHighlightTime = 0f;
     private Color tempColor;
-    public enum MouseState
-    {
-        HOVER,
-        DRAG,
-        DEFAULT,
-        SELECTED
-    }
+    
 
-    public enum TileAction
-    {
-        DEFAULT,
-        LANDING,
-        DISABLE,
-    }
-
-    private MouseState currentMouseState = MouseState.DEFAULT;
+    private PegMouseState currentMouseState = PegMouseState.DEFAULT;
     private TileAction currentTileState = TileAction.DEFAULT;
 
     private void Awake()
@@ -50,14 +37,14 @@ public class PegSlot : MonoBehaviour {
 	void Update () {
 
         //Peg specific coloring updates
-		if(pegObject.activeSelf && currentMouseState != MouseState.DEFAULT && currentMouseState != MouseState.SELECTED)
+		if(pegObject.activeSelf && currentMouseState != PegMouseState.DEFAULT && currentMouseState != PegMouseState.SELECTED)
         {
 
-            if (currentMouseState == MouseState.DRAG)
+            if (currentMouseState == PegMouseState.DRAG)
             {
                 elapsedHighlightTime += Time.deltaTime;
             }
-            else if (currentMouseState == MouseState.HOVER)
+            else if (currentMouseState == PegMouseState.HOVER)
             {
                 elapsedHighlightTime += Time.deltaTime * hoverMultiplier;
             }
@@ -129,7 +116,7 @@ public class PegSlot : MonoBehaviour {
         if(pegObject != null && pegObject.activeSelf && pegRenderer != null)
         {
             pegRenderer.material.color = Color.green;
-            currentMouseState = MouseState.SELECTED;
+            currentMouseState = PegMouseState.SELECTED;
         }
     }
 
@@ -179,8 +166,8 @@ public class PegSlot : MonoBehaviour {
 
     private void OnMouseOver()
     {
-        if(currentMouseState != MouseState.DRAG)
-            currentMouseState = MouseState.HOVER;
+        if(currentMouseState != PegMouseState.DRAG)
+            currentMouseState = PegMouseState.HOVER;
     }
 
     private void OnMouseEnter()
@@ -188,11 +175,11 @@ public class PegSlot : MonoBehaviour {
        
 
         //On enter, highlight renderer object
-        if (currentMouseState != MouseState.DRAG)
+        if (currentMouseState != PegMouseState.DRAG)
         {
             elapsedHighlightTime = 0f;
 
-            currentMouseState = MouseState.HOVER;
+            currentMouseState = PegMouseState.HOVER;
         }
     }
 
@@ -208,16 +195,16 @@ public class PegSlot : MonoBehaviour {
 
     private void OnMouseExit()
     {
-        if (currentMouseState != MouseState.DRAG)
+        if (currentMouseState != PegMouseState.DRAG)
         {
-            currentMouseState = MouseState.DEFAULT;
+            currentMouseState = PegMouseState.DEFAULT;
             ResetAlpha();
         }
     }
 
     private void OnMouseUp()
     {
-        currentMouseState = MouseState.DEFAULT;
+        currentMouseState = PegMouseState.DEFAULT;
         ResetAlpha();
     }
 }

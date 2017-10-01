@@ -17,6 +17,9 @@ public class GameBoard : MonoBehaviour {
 
     public GameObject pegSlotPrefab;
 
+    public event Int_Event GameOver;
+
+    private bool boardChanged = false; //This bool should be set to true anytime a peg is jumped and is removed, to then check for game over conditions
     private float pegRowHeightChange = 1f; //The spacing to move each row of holes to. Should be half way between holes beneath them, but still pegSpacing away from other holes.
 
     private List<List<PegSlotData>> boardArrays; //This holds the initial data set of peg holes in the board. This should be used for initial connectivity of peg holes.
@@ -115,7 +118,7 @@ public class GameBoard : MonoBehaviour {
         //Check all slots if they can move
         foreach(PegSlotData slotData in allPegSlots)
         {
-            if(slotData.CanJumpInAnyDirection())
+            if(slotData.HasPeg() && slotData.CanJumpInAnyDirection())
             {
                 return true;
             }
@@ -221,7 +224,12 @@ public class GameBoard : MonoBehaviour {
     {
         if (checkSlot != null)
         {
-            return checkSlot.DoJumpInDirection(jumpDirection);
+            if(checkSlot.DoJumpInDirection(jumpDirection))
+            {
+                //Jump was good, now that a peg was removed, evaluate board for game over conditions
+                boardChanged = true;
+                return true;
+            }
         }
         return false;
     }
@@ -314,6 +322,26 @@ public class GameBoard : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if(boardChanged)
+        {
+            boardChanged = false;
+            //Check if there are no moves left
+            if(!Check_CanMoveAll())
+            {
+                //No moves left, game over
+                OnGameOver();
+            }
+        }
+    }
 
+    void OnGameOver()
+    {
+        //Now that the game is over, count pegs to report to the game manager
+        int pegScore = Check_CountScore();
+
+        if(GameOver != null)
+        {
+            GameOver.Invoke(pegScore);
+        }
     }
 }
