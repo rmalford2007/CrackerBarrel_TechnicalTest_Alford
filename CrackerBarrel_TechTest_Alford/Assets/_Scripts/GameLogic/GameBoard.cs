@@ -55,6 +55,11 @@ public class GameBoard : MonoBehaviour {
             boardDisplayInfo = customPreset;
     }
 
+    public float GetBoardWidth()
+    {
+        return baseRowPegCount * pegSpacing;
+    }
+
     /// <summary>
     /// Initializes the game board data to use a triangle with base row holes specified by pegCount. Note - This doesn't create game objects, only the data side that the game objects will spawn from later.
     /// </summary>

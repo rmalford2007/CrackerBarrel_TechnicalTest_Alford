@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-
+[System.Serializable]
+public class TransformFloatEvent : UnityEvent<Transform, float> { }
 /// <summary>
 /// Singleton - Controls the start and stop events for the game. Holds the controls to show / hide / navigate the menu during play mode. 
 /// </summary>
@@ -10,6 +12,8 @@ public class GameManager : MonoBehaviour {
     public static GameManager Instance;
 
     public GameObject boardPrefab;
+
+    public TransformFloatEvent BoardCreated;
 
     private BoardPreset chosenBoardPreset;
     private GameObject activeBoardObject;
@@ -61,10 +65,18 @@ public class GameManager : MonoBehaviour {
             {
                 activeBoardScript = activeBoardObject.GetComponent<GameBoard>();
                 activeBoardScript.GameOver += OnGameOver;
+
+                OnBoardCreated(activeBoardObject.transform, activeBoardScript.GetBoardWidth());
             }
 
             isGameOver = false;
         }
+    }
+
+    private void OnBoardCreated(Transform eventTransform, float eventFloat)
+    {
+        if (BoardCreated != null)
+            BoardCreated.Invoke(eventTransform, eventFloat);
     }
 
     public static void OnResetBoard_Static()

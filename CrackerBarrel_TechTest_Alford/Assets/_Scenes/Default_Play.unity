@@ -330,6 +330,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boardPrefab: {fileID: 1816186273211868, guid: 727ca92b82fdec04bad5546d72d75915,
     type: 2}
+  BoardCreated:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1758342085}
+        m_MethodName: CenterCameraOnBoard
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: TransformFloatEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!4 &1419473347
 Transform:
   m_ObjectHideFlags: 0
@@ -517,6 +533,7 @@ GameObject:
   - component: {fileID: 1758342082}
   - component: {fileID: 1758342081}
   - component: {fileID: 1758342080}
+  - component: {fileID: 1758342085}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -565,7 +582,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 1.6
+  orthographic size: 3
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -594,3 +611,14 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &1758342085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1758342079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba814444d38bb6b4fb364920a2df2b27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
