@@ -7,19 +7,20 @@ public class CameraPan_Controller : MonoBehaviour {
 
     public AnimationCurve distanceDrivenSpeedCurve;
     public AnimationCurve zoomSpeed;
+
     private Camera currentCamera;
 
-    private Vector3 startingPosition;
-    private Vector3 grabPosition;
-    private Vector3 targetDropPosition;
-    private Vector3 currentPosition;
+    private Vector3 startingCameraPosition;
+    private Vector3 screenGrabPosition;
+    private Vector3 screenDropPosition;
+    private Vector3 screenCurrentPosition;
     private Vector3 dragDirection;
     private float maxZoom = 20f;
 
     private void Awake()
     {
         currentCamera = GetComponent<Camera>();
-        startingPosition = targetDropPosition = transform.position;
+        startingCameraPosition = screenDropPosition = transform.position;
     }
 
     /// <summary>
@@ -54,7 +55,7 @@ public class CameraPan_Controller : MonoBehaviour {
 
     void SetDestination(Vector3 nextDestination)
     {
-        targetDropPosition = nextDestination;
+        screenDropPosition = nextDestination;
     }
 
     // Use this for initialization
@@ -69,26 +70,26 @@ public class CameraPan_Controller : MonoBehaviour {
 
         if(deltaZoom != 0f)
         {
-            targetDropPosition.y = startingPosition.y = Mathf.Clamp(startingPosition.y + deltaZoom, 1.5f, maxZoom);
+            screenDropPosition.y = startingCameraPosition.y = Mathf.Clamp(startingCameraPosition.y + deltaZoom, 1.5f, maxZoom);
         }
         if(Input.GetButtonDown("Camera Pan"))
         {
-            grabPosition = Input.mousePosition;
+            screenGrabPosition = Input.mousePosition;
            
-            startingPosition = transform.position;
+            startingCameraPosition = transform.position;
         }
         if(Input.GetButton("Camera Pan"))
         {
-            currentPosition = Input.mousePosition;
+            screenCurrentPosition = Input.mousePosition;
 
-            dragDirection = (Camera.main.ScreenToWorldPoint(currentPosition) - Camera.main.ScreenToWorldPoint(grabPosition)) * -1f; //for some reason if we don't multiply by a factor of 100, we lose some distance in the drag
+            dragDirection = (Camera.main.ScreenToWorldPoint(screenCurrentPosition) - Camera.main.ScreenToWorldPoint(screenGrabPosition)) * -1f; //for some reason if we don't multiply by a factor of 100, we lose some distance in the drag
             
-            targetDropPosition = startingPosition + dragDirection;
-            targetDropPosition.y = startingPosition.y;
+            screenDropPosition = startingCameraPosition + dragDirection;
+            screenDropPosition.y = startingCameraPosition.y;
         }
 
-        if(transform.position != targetDropPosition)
-            transform.position = Vector3.MoveTowards(transform.position, targetDropPosition, Time.deltaTime * distanceDrivenSpeedCurve.Evaluate(Vector3.Distance(transform.position, targetDropPosition)));
+        if(transform.position != screenDropPosition)
+            transform.position = Vector3.MoveTowards(transform.position, screenDropPosition, Time.deltaTime * distanceDrivenSpeedCurve.Evaluate(Vector3.Distance(transform.position, screenDropPosition)));
 
         if (transform.position.y != currentCamera.orthographicSize)
         {
