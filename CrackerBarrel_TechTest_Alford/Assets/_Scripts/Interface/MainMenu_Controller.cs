@@ -14,6 +14,7 @@ public class MainMenu_Controller : MonoBehaviour {
     public GameObject playButtonGameObject;
     public GameObject mainBackground;
     public GameObject resumeButtonGameObject;
+    public GameObject activePlayPanel;
     public TMP_Text  statusText; 
 
     bool isPaused = false;
@@ -103,6 +104,7 @@ public class MainMenu_Controller : MonoBehaviour {
         playButtonGameObject.SetActive(false);
         resumeButtonGameObject.SetActive(allowResume);
         mainBackground.SetActive(false);
+        activePlayPanel.SetActive(false);
     }
 
     private void UnpauseGame()
@@ -117,11 +119,11 @@ public class MainMenu_Controller : MonoBehaviour {
 
     public void OnMainMenu()
     {
-
         pausePanel.SetActive(false);
         mainPanel.SetActive(true);
         playButtonGameObject.SetActive(true);
         mainBackground.SetActive(true);
+        activePlayPanel.SetActive(false);
     }
 
     public void HideMenu()
@@ -129,6 +131,7 @@ public class MainMenu_Controller : MonoBehaviour {
         pausePanel.SetActive(false);
         mainPanel.SetActive(false);
         mainBackground.SetActive(false);
+        activePlayPanel.SetActive(true);
     }
 
     public void OnPlayClicked()
