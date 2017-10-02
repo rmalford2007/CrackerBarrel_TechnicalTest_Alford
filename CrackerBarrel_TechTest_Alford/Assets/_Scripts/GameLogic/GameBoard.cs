@@ -29,6 +29,8 @@ public class GameBoard : MonoBehaviour {
 
     private PegSlotData activePeg;
 
+    private bool isFreshStart = true; //this flag should inform the board that the player needs to choose a peg as the first empty space to start the game
+
     private void Awake()
     {
         pegRowHeightChange = Mathf.Sqrt(Mathf.Pow(pegSpacing, 2f) - Mathf.Pow(pegSpacing / 2f, 2f)); //use pythagorean theorem to get the height value
@@ -150,9 +152,6 @@ public class GameBoard : MonoBehaviour {
         if (boardArrays != null)
         {
             //All peg graphics should be spawned here
-            //Remove first peg to start game (top middle for now) - hardcode classic to see if it works
-            if (boardArrays.Count > 0 && boardArrays[0] != null)
-                boardArrays[0][boardArrays[0].Count - 1].SetAsStartSlot();
 
             //Loop through the board array we created and spawn objects in the world for each hole
             //for each column
@@ -165,8 +164,6 @@ public class GameBoard : MonoBehaviour {
                 {
                     
                     xPos += pegSpacing / 2f;
-                    //zPos = -((boardArrays.Count) / 2f - i) * pegRowHeightChange + pegRowHeightChange / 2f;
-                    //xPos = -(boardArrays[i].Count / 2f - j) * pegSpacing + pegSpacing / 2f;
                     
                     yPos = transform.position.y;
                     nextPosition.Set(xPos, yPos, zPos);
@@ -194,6 +191,11 @@ public class GameBoard : MonoBehaviour {
                     zPos += pegRowHeightChange;
                 }
             }
+
+            //Activate StartPegSelection to choose the first peg to remove for board setup
+
+            //HARDCODE - Remove first peg to start game (top middle for now) - hardcode classic to see if it works
+            
         }
 
 
@@ -236,38 +238,51 @@ public class GameBoard : MonoBehaviour {
 
     public void OnSelectPeg(PegSlotData selectedSlotData)
     {
-        //if there is a peg in the slot, activate it, but first deactivate the old peg that was active
-        if(selectedSlotData != null && selectedSlotData.HasPeg())
+        if (isFreshStart)
         {
-            if (activePeg != null)
+            //Make sure this isn't null, do a peg check in case something is messed up - if it is messed up there are other problems besides this... as all pegs should be in the board
+            if(selectedSlotData != null && selectedSlotData.HasPeg())
             {
-                activePeg.Deselect();
+                selectedSlotData.SetAsStartSlot();
+                isFreshStart = false;
             }
-            activePeg = selectedSlotData;
-
-            if(selectedSlotData != null)
-                selectedSlotData.Select();
-            
         }
-        else if(activePeg != null && selectedSlotData != null)
+        else
         {
-            //There is no peg in this selected slot, but we already have an active peg, this means we are dropping the peg in this slot
 
-            //Evaluate the jump direction to see if we can process the jump request
-            PegDirection jumpDirection = EvaluateDirection(activePeg, selectedSlotData);
-            //If this is a valid direction, verify that we can jump here
-            if(jumpDirection != PegDirection.INVALID)
+            //if there is a peg in the slot, activate it, but first deactivate the old peg that was active
+            if (selectedSlotData != null && selectedSlotData.HasPeg())
             {
-                PegSlotData checkJumpSlot = CanJumpInDirection(activePeg, jumpDirection);
-                
-                //Check the landing position in the jumpDirection, if the returned position is equal to our clicked position, then this is a valid jump
-                if (checkJumpSlot == selectedSlotData)
+                if (activePeg != null)
                 {
-                    if (DoJumpInDirection(activePeg, jumpDirection))
+                    activePeg.Deselect();
+                }
+                activePeg = selectedSlotData;
+
+                if (selectedSlotData != null)
+                    selectedSlotData.Select();
+
+            }
+            else if (activePeg != null && selectedSlotData != null)
+            {
+                //There is no peg in this selected slot, but we already have an active peg, this means we are dropping the peg in this slot
+
+                //Evaluate the jump direction to see if we can process the jump request
+                PegDirection jumpDirection = EvaluateDirection(activePeg, selectedSlotData);
+                //If this is a valid direction, verify that we can jump here
+                if (jumpDirection != PegDirection.INVALID)
+                {
+                    PegSlotData checkJumpSlot = CanJumpInDirection(activePeg, jumpDirection);
+
+                    //Check the landing position in the jumpDirection, if the returned position is equal to our clicked position, then this is a valid jump
+                    if (checkJumpSlot == selectedSlotData)
                     {
-                        //Finished jumping deselect the tiles we used
-                        activePeg.Deselect();
-                        activePeg = null;
+                        if (DoJumpInDirection(activePeg, jumpDirection))
+                        {
+                            //Finished jumping deselect the tiles we used
+                            activePeg.Deselect();
+                            activePeg = null;
+                        }
                     }
                 }
             }
