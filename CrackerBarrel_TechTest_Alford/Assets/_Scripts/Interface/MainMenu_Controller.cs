@@ -17,7 +17,9 @@ public class MainMenu_Controller : MonoBehaviour {
     public GameObject activePlayPanel;
     public GameObject instructionsPanel;
     public GameObject mainNavigationPanel;
-    public TMP_Text  statusText; 
+    public GameObject gameSetupPanel;
+    public TMP_Text  statusText;
+    public TMP_Text boardPegCountText;
 
     bool isPaused = false;
     float saveTimeScale = 1f;
@@ -104,6 +106,7 @@ public class MainMenu_Controller : MonoBehaviour {
         pausePanel.SetActive(true);
         mainPanel.SetActive(true);
         mainNavigationPanel.SetActive(true);
+        gameSetupPanel.SetActive(false);
         instructionsPanel.SetActive(false);
         playButtonGameObject.SetActive(false);
         resumeButtonGameObject.SetActive(allowResume);
@@ -138,6 +141,7 @@ public class MainMenu_Controller : MonoBehaviour {
         pausePanel.SetActive(false);
         mainPanel.SetActive(true);
         mainNavigationPanel.SetActive(true);
+        gameSetupPanel.SetActive(false);
         instructionsPanel.SetActive(false);
         playButtonGameObject.SetActive(true);
         mainBackground.SetActive(true);
@@ -153,6 +157,13 @@ public class MainMenu_Controller : MonoBehaviour {
     }
 
     public void OnPlayClicked()
+    {
+        instructionsPanel.SetActive(false);
+        mainNavigationPanel.SetActive(false);
+        gameSetupPanel.SetActive(true);
+    }
+
+    public void OnCreateBoard()
     {
         SceneManager.LoadScene("Default_Play");
     }
@@ -179,6 +190,29 @@ public class MainMenu_Controller : MonoBehaviour {
         if (Instance != null)
             return Instance.isPaused;
         return false;
+    }
+
+    /// <summary>
+    /// This is an interface function for setting the text of the peg count according to the slider position being changed. 
+    /// Proper use is to add this function to the OnValueChanged listener of a Unity Slider object, then drag the slider into the parameter field.
+    /// </summary>
+    /// <param name="changingSlider">The slider the text is linked to.</param>
+    public void SetBoardSizeBySlider(Slider changingSlider)
+    {
+        if (boardPegCountText != null && changingSlider != null)
+        {
+            //to get the board peg count use the nth triangle number formula (n squared + n) / 2
+            int pegCount = 0;
+            if (changingSlider.wholeNumbers)
+                pegCount = (int)(changingSlider.value);
+            else
+            {
+                //slider is on floats, round it first
+                pegCount = Mathf.RoundToInt(changingSlider.value);
+            }
+            pegCount = (int)((Mathf.Pow(pegCount, 2) + pegCount) / 2f);
+            boardPegCountText.text = pegCount.ToString() + " Pegs";
+        }
     }
 
     void QuitGame()
