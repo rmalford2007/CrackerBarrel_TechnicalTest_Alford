@@ -75,7 +75,6 @@ public class GameManager : MonoBehaviour {
     public void OnGameOver(int score)
     {
         isGameOver = true;
-        Debug.Log("GameOver: score = " + score.ToString());
 
         //Evaluate score text
         string scoreText = "";
@@ -83,19 +82,25 @@ public class GameManager : MonoBehaviour {
         switch(score)
         {
             case 1:
-                scoreText = "Left Only One\nYou're genius";
+                scoreText = "You Win!";
                 break;
-            case 2:
-                scoreText = "Left Two\nYou're purty smart";
-                break;
-            case 3:
-                scoreText = "Left Three\nYou're just plain dumb";
-                break;
-
-            case 4:
             default:
-                scoreText = "Left Four or More\nYou're just plain\n\"EG-NO-RA-MOOSE\"";
+                scoreText = "You Lose.\nYou had " + score.ToString() + " pegs remaining.";
                 break;
+            //case 1:
+            //    scoreText = "Left Only One\nYou're genius";
+            //    break;
+            //case 2:
+            //    scoreText = "Left Two\nYou're purty smart";
+            //    break;
+            //case 3:
+            //    scoreText = "Left Three\nYou're just plain dumb";
+            //    break;
+
+            //case 4:
+            //default:
+            //    scoreText = "Left Four or More\nYou're just plain\n\"EG-NO-RA-MOOSE\"";
+            //    break;
         }
         TogglePause(scoreText);
     }
