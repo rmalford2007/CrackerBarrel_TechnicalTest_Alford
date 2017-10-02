@@ -440,56 +440,6 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114673497998680140, guid: 5db0a0b28cfcb8b41a918bd55be5dec2,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114673497998680140, guid: 5db0a0b28cfcb8b41a918bd55be5dec2,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114698701298305068, guid: 5db0a0b28cfcb8b41a918bd55be5dec2,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114698701298305068, guid: 5db0a0b28cfcb8b41a918bd55be5dec2,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114308705548417364, guid: 5db0a0b28cfcb8b41a918bd55be5dec2,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114308705548417364, guid: 5db0a0b28cfcb8b41a918bd55be5dec2,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114967951329212208, guid: 5db0a0b28cfcb8b41a918bd55be5dec2,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114967951329212208, guid: 5db0a0b28cfcb8b41a918bd55be5dec2,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114940105246532412, guid: 5db0a0b28cfcb8b41a918bd55be5dec2,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114940105246532412, guid: 5db0a0b28cfcb8b41a918bd55be5dec2,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5db0a0b28cfcb8b41a918bd55be5dec2, type: 2}
   m_IsPrefabParent: 0

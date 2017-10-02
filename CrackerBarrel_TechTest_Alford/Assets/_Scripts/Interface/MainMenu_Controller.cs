@@ -15,6 +15,8 @@ public class MainMenu_Controller : MonoBehaviour {
     public GameObject mainBackground;
     public GameObject resumeButtonGameObject;
     public GameObject activePlayPanel;
+    public GameObject instructionsPanel;
+    public GameObject mainNavigationPanel;
     public TMP_Text  statusText; 
 
     bool isPaused = false;
@@ -101,10 +103,24 @@ public class MainMenu_Controller : MonoBehaviour {
         //Set Visibility
         pausePanel.SetActive(true);
         mainPanel.SetActive(true);
+        mainNavigationPanel.SetActive(true);
+        instructionsPanel.SetActive(false);
         playButtonGameObject.SetActive(false);
         resumeButtonGameObject.SetActive(allowResume);
         mainBackground.SetActive(false);
         activePlayPanel.SetActive(false);
+    }
+
+    public void OnToggleInstructions()
+    {
+        mainNavigationPanel.SetActive(!mainNavigationPanel.activeSelf);
+        instructionsPanel.SetActive(!mainNavigationPanel.activeSelf);
+
+        if (SceneManager.GetActiveScene().name != "Default_Menu")
+        {
+            //When not in the menu, we also need to toggle status text, reset and resume button which is in the pausePanel
+            pausePanel.SetActive(!pausePanel.activeSelf);
+        }
     }
 
     private void UnpauseGame()
@@ -121,6 +137,8 @@ public class MainMenu_Controller : MonoBehaviour {
     {
         pausePanel.SetActive(false);
         mainPanel.SetActive(true);
+        mainNavigationPanel.SetActive(true);
+        instructionsPanel.SetActive(false);
         playButtonGameObject.SetActive(true);
         mainBackground.SetActive(true);
         activePlayPanel.SetActive(false);
