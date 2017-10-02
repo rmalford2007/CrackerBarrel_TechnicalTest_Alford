@@ -622,3 +622,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba814444d38bb6b4fb364920a2df2b27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  distanceDrivenSpeedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 2
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1.2745306
+      value: 23.624495
+      inSlope: 24.694326
+      outSlope: 24.694326
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 3
+      value: 60
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  zoomSpeed:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 1.0551834
+      value: 3.775525
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 3
+      value: 10.284912
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
