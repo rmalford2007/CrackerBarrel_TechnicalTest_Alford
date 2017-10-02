@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4896798012034144}
   - component: {fileID: 114585106548362920}
   m_Layer: 0
-  m_Name: ClassicGameBoard
+  m_Name: DefaultGameBoard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,7 +51,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 529d10eb2572ae944a7d7bc2d7cda221, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseRowPegCount: 5
   pegSpacing: 0.5
   pegSlotPrefab: {fileID: 1394270174507022, guid: b0074e525329e5649b3db2de0a59e512,
     type: 2}

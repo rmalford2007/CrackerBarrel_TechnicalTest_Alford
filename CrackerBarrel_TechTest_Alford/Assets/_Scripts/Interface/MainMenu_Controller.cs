@@ -20,6 +20,8 @@ public class MainMenu_Controller : MonoBehaviour {
     public GameObject gameSetupPanel;
     public TMP_Text  statusText;
     public TMP_Text boardPegCountText;
+    public BoardPreset defaultPreset;
+    public Slider boardSizeSlider;
 
     bool isPaused = false;
     float saveTimeScale = 1f;
@@ -66,6 +68,19 @@ public class MainMenu_Controller : MonoBehaviour {
     {
         if (SceneManager.GetActiveScene().name == "Default_Menu")
         {
+
+            if(defaultPreset != null)
+            {
+                //Create an instance of the defaultPreset so changes do not persist through game closes
+                defaultPreset = Instantiate(defaultPreset); 
+            }
+
+            if(boardSizeSlider != null && defaultPreset != null)
+            {
+                //Initialize the slider data
+                boardSizeSlider.value = defaultPreset.baseRowPegCount;
+            }
+
             OnMainMenu();
         }
         else
@@ -210,6 +225,8 @@ public class MainMenu_Controller : MonoBehaviour {
                 //slider is on floats, round it first
                 pegCount = Mathf.RoundToInt(changingSlider.value);
             }
+            if (defaultPreset != null)
+                defaultPreset.baseRowPegCount = pegCount;
             pegCount = (int)((Mathf.Pow(pegCount, 2) + pegCount) / 2f);
             boardPegCountText.text = pegCount.ToString() + " Pegs";
         }

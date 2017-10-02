@@ -9,8 +9,9 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
     public static GameManager Instance;
 
-    public GameObject classicBoardPrefab;
-    
+    public GameObject boardPrefab;
+
+    private BoardPreset chosenBoardPreset;
     private GameObject activeBoardObject;
     private GameBoard activeBoardScript;
 
@@ -37,7 +38,18 @@ public class GameManager : MonoBehaviour {
     }
     // Use this for initialization
     void Start () {
-        OnCreateNewBoard(classicBoardPrefab);
+        if(MainMenu_Controller.Instance != null)
+        {
+            chosenBoardPreset = MainMenu_Controller.Instance.defaultPreset;
+            GameBoard boardScript = boardPrefab.GetComponent<GameBoard>();
+            if (boardScript != null)
+            {
+                boardScript.SetBoardPresetInfo(chosenBoardPreset);
+            }
+            else
+                Debug.Log("Unable to set data in prefab instance.");
+        }
+        OnCreateNewBoard(boardPrefab);
 	}
 
     void OnCreateNewBoard(GameObject boardPrefab)
@@ -109,7 +121,7 @@ public class GameManager : MonoBehaviour {
     {
         Destroy(activeBoardObject);
 
-        OnCreateNewBoard(classicBoardPrefab);
+        OnCreateNewBoard(boardPrefab);
     }
 
     public static bool IsControlEnabled()

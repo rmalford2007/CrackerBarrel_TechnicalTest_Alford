@@ -7,9 +7,10 @@ using UnityEngine;
 /// </summary>
 public class GameBoard : MonoBehaviour {
 
-    [Range(5, 20)]
-    [Tooltip("This number should be the number of pegs in the longest row of the board. In a classic game this should be 5 pegs. Changing this value will not resize the board during play, change this in edit mode.\nBounds: 5, 20 inclusive")]
-    public int baseRowPegCount = 5;
+    [HideInInspector]
+    [SerializeField]
+    private BoardPreset boardDisplayInfo; //Set to serialize so we can modify this in a prefab instead before we instantiate the prefab, also hide it so it can't be modified manually in inspector
+    private int baseRowPegCount = 5;
 
     [Range(.5f, 10f)]
     [Tooltip("The distance between each peg.")]
@@ -24,7 +25,7 @@ public class GameBoard : MonoBehaviour {
 
     private List<List<PegSlotData>> boardArrays; //This holds the initial data set of peg holes in the board. This should be used for initial connectivity of peg holes.
     private HashSet<PegSlotData> allPegSlots; //Hashed set of all slots for easier lookup
-    private Dictionary<PegSlotData, PegSlot> pegTileGameObjects; //Dictionary to links the pegSlotData class to its appropriate world object that is spawned
+    private Dictionary<PegSlotData, PegSlot> pegTileGameObjects; //Dictionary that links the pegSlotData class to its appropriate world object that is spawned
     //private HashSet<PegSlotData> moveableSlots; //Hashed set of slots. Plan is to only have this contain slots that can still jump
 
     private PegSlotData activePeg;
@@ -33,6 +34,12 @@ public class GameBoard : MonoBehaviour {
 
     private void Awake()
     {
+        if (boardDisplayInfo == null)
+        {
+            Debug.Log("Display info null on creation");
+        }
+        else
+            baseRowPegCount = boardDisplayInfo.baseRowPegCount;
         pegRowHeightChange = Mathf.Sqrt(Mathf.Pow(pegSpacing, 2f) - Mathf.Pow(pegSpacing / 2f, 2f)); //use pythagorean theorem to get the height value
         pegTileGameObjects = new Dictionary<PegSlotData, PegSlot>();
         InitBoard(baseRowPegCount);
@@ -40,6 +47,12 @@ public class GameBoard : MonoBehaviour {
 
         //Init the moveable slots
         //moveableSlots = new HashSet<PegSlotData>();
+    }
+
+    public void SetBoardPresetInfo(BoardPreset customPreset)
+    {
+        if(customPreset != null)
+            boardDisplayInfo = customPreset;
     }
 
     /// <summary>
