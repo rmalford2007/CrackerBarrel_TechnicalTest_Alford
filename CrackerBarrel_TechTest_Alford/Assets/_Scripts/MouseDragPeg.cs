@@ -7,11 +7,13 @@ public class MouseDragPeg : MonoBehaviour {
 
     [Tooltip("The distance from the camera to drop pegs onto the board. This should be further than the lowest board on the scene. May get pegs stuck to your mouse if this value is too small.")]
     public float raycastDropDistance = 100f;
-    private GameObject pegObject;
-    private Renderer pegRenderer;
-    private PegSlotData activePeg;
-    private PegSlot activePegSlot;
-    private bool postPauseReset = false;
+
+    private GameObject pegObject; //peg game object that is hidden under the mouse
+    private Renderer pegRenderer; //peg color control that syncs color with the peg being grabbed
+    private PegSlotData activePeg;//the currently held peg
+    private PegSlot activePegSlot;//the currently held peg's home game object script. Pegs should be returned home when bad things happen.
+
+    private bool postPauseReset = false; //flag that tracks if pause has occured while holding a peg. Reset the peg to home when unpaused.
     private void Awake()
     {
         if (Instance == null)

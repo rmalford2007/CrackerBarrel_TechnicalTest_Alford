@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Holds information about an individual peg. Color, game object transform when existing in the world.
@@ -8,17 +6,14 @@ using UnityEngine;
 public class PegData
 {
     public Color pegColor = Color.blue;
-    public Transform pegTransform;
 
     public PegData()
     {
-        pegTransform = null;
         pegColor = Color.blue;
     }
 
     public PegData(Color _pegColor)
     {
-        pegTransform = null;
         pegColor = _pegColor;
     }
 }
@@ -284,12 +279,18 @@ public class PegSlotData{
         }
     }
 
+    /// <summary>
+    /// Event hook for drag n drop support
+    /// </summary>
     public void OnPegStartDrag()
     {
         if (PegStartDrag != null)
             PegStartDrag.Invoke();
     }
 
+    /// <summary>
+    /// Drop event passes the peg color information to show in the dropped location
+    /// </summary>
     public void OnPegStopDrag()
     {
         if (PegStopDrag != null)

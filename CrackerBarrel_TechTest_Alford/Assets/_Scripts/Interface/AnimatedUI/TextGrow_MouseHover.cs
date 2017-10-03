@@ -4,6 +4,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// Provides text animations for a text object that is being moused over.
+/// </summary>
 [RequireComponent(typeof(TextMeshProUGUI))]
 [System.Serializable]
 public class TextGrow_MouseHover : EventTrigger

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Class that color the entire board a single color.
+/// </summary>
 [System.Serializable]
 public class PegColorStyle_SingleColor : PegColorStyle {
    

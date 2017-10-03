@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+/// <summary>
+/// Syncs the value of a drop down control to it's PlayerPref by key. On value changed, sets the player pref.
+/// </summary>
 [RequireComponent(typeof(TMP_Dropdown))]
 public class SetDropDown : MonoBehaviour {
     public string key = "DragDrop";

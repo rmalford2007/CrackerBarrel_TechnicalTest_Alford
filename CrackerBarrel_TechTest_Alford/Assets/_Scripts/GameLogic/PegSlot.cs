@@ -2,25 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Game logic is held in the PegSlotData. Game interactions with the player occur in the PegSlot class. Behaviour of the world objects occurs here.
+/// </summary>
 public class PegSlot : MonoBehaviour {
 
     public AnimationCurve blinkHoverCurve;
     public float hoverMultiplier = 3f;
-
-    public event PegSlotData_Event TileSelected;
+    
+    public event PegSlotData_Event TileSelected; //Event that occurs when this tile on the board is selected.
 
     private PegSlotData sourceSlotData; //The logic for this peg. Specifies if a peg is visually in this slot or not. 
 
     private Renderer pegHoldRenderer; //This is the renderer for the tile of this peg slot. 
     private GameObject pegObject; //The child object attached to this peg slot. This should be a 3d model of a peg
-    private Renderer pegRenderer;
+    private Renderer pegRenderer; //The color renderer for the actual peg
 
     private float elapsedHighlightTime = 0f;
     private Color tempColor;
     
 
     private PegMouseState currentMouseState = PegMouseState.DEFAULT;
-    private TileAction currentTileState = TileAction.DEFAULT;
+    //private TileAction currentTileState = TileAction.DEFAULT; //Time ran out - Was going to use this enum for highlighting the tile sections when a tile is able to accept a peg during mouse over. Or valid jump locations.
 
     private void Awake()
     {
@@ -56,31 +59,18 @@ public class PegSlot : MonoBehaviour {
             tempColor.a = blinkHoverCurve.Evaluate(elapsedHighlightTime);
             pegRenderer.material.color = tempColor;
         }
-
-        //Peg slot specific updates
-        if(pegObject.activeSelf == false)
-        {
-            //This is the color animation for showing landable locations when a peg is selected
-            if(currentTileState == TileAction.LANDING)
-            {
-
-            }
-
-            //This is the color animation for showing non landable locations when a peg is selected.
-            if(currentTileState == TileAction.DISABLE)
-            {
-
-            }
-        }
 	}
-
-
-
+    
     private void OnDestroy()
     {
         UnsubscribeFromPegSlot();
     }
 
+    /// <summary>
+    /// Set the source script that this game object class belongs to. 
+    /// </summary>
+    /// <param name="setData"></param>
+    /// <param name="isStarterSlot"></param>
     public void SetSlotData(PegSlotData setData, bool isStarterSlot=false)
     {
         sourceSlotData = setData;
@@ -91,6 +81,9 @@ public class PegSlot : MonoBehaviour {
         SubscibeToPegSlot();
     }
 
+    /// <summary>
+    /// Subscribe the data foundation class events for this slot. 
+    /// </summary>
     void SubscibeToPegSlot()
     {
         if(sourceSlotData != null)
@@ -99,11 +92,12 @@ public class PegSlot : MonoBehaviour {
             sourceSlotData.PegRemoved += PegRemoved;
             sourceSlotData.PegSelected += OnPegSlotSelected;
             sourceSlotData.PegDeselected += OnPegSlotDeselected;
-            sourceSlotData.PegStartDrag += OnPegStartDrag;
-            sourceSlotData.PegStopDrag += OnPegStopDrag;
         }
     }
 
+    /// <summary>
+    /// This probably doesn't matter in this games case. But just for general practice we need to unsubscribe when this object is destroyed.
+    /// </summary>
     void UnsubscribeFromPegSlot()
     {
         if (sourceSlotData != null)
@@ -112,14 +106,24 @@ public class PegSlot : MonoBehaviour {
             sourceSlotData.PegRemoved -= PegRemoved;
             sourceSlotData.PegSelected -= OnPegSlotSelected;
             sourceSlotData.PegDeselected -= OnPegSlotDeselected;
+            sourceSlotData.PegStartDrag -= OnPegStartDrag;
+            sourceSlotData.PegStopDrag -= OnPegStopDrag;
         }
     }
 
+    /// <summary>
+    /// When this peg object begins to get dragged, hide it
+    /// </summary>
     void OnPegStartDrag()
     {
         PegAdded(null);
     }
 
+    /// <summary>
+    /// When this peg object stops dragging, renabled the peg if there is color information passed in. Else this peg went somewhere else, ie jumped to another slot.
+    /// When there is data here, it means the user dropped the peg off a cliff or on an invalid location, so we need to snap the peg on the mouse back to its home.
+    /// </summary>
+    /// <param name="droppedMousePeg"></param>
     void OnPegStopDrag(PegData droppedMousePeg)
     {
         PegAdded(droppedMousePeg);
@@ -138,16 +142,7 @@ public class PegSlot : MonoBehaviour {
 
     void OnPegSlotDeselected()
     {
-        //if (pegObject != null)
-        //{
-            
-        //    if (GameManager.DragDropEnabled())
-        //    {
-        //        if (sourceSlotData.HasPeg())
-        //            pegObject.SetActive(true);
-        //    }
-
-        //}
+        //This method ended up bundled with PegAdded, but passing in null information
     }
 
 
@@ -230,7 +225,6 @@ public class PegSlot : MonoBehaviour {
     {
         //Leave early if controls are disabled
         PegSlotClicked();
-        //currentMouseState = MouseState.DRAG;
     }
 
     private void OnMouseExit()

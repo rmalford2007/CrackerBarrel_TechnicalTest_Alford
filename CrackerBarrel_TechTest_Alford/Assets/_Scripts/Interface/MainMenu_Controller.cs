@@ -8,20 +8,50 @@ using TMPro;
 public class MainMenu_Controller : MonoBehaviour {
 
     public static MainMenu_Controller Instance;
-
-    public GameObject mainPanel;
-    public GameObject pausePanel;
-    public GameObject playButtonGameObject;
+    [Header("Main Menu Scene")]
+    [Tooltip("The main menu background color. Only shown in the Default_Menu scene and not during play.")]
     public GameObject mainBackground;
-    public GameObject resumeButtonGameObject;
-    public GameObject activePlayPanel;
-    public GameObject instructionsPanel;
+
+
+    [Header("Main Navigation")]
+    [Tooltip("This is the panel that holds panels for title, author, instructions, game setup, and more.")]
+    public GameObject mainPanel;
+
+    [Tooltip("This is the panel that provides the main navigation when the mainPanel is active.")]
     public GameObject mainNavigationPanel;
+
+    [Tooltip("The main menu navigation play button. This is hidden when paused during play.")]
+    public GameObject playButtonGameObject;
+
+    [Tooltip("This is the panel that provides instructions to the player.")]
+    public GameObject instructionsPanel;
+
+    [Tooltip("This is where the game board settings are set.")]
     public GameObject gameSetupPanel;
-    public TMP_Text  statusText;
-    public TMP_Text boardPegCountText;
-    public BoardPreset defaultPreset;
+
+    [Tooltip("The slider control for the size of the board. Only for initialization of what it starts with.")]
     public Slider boardSizeSlider;
+
+    [Tooltip("This is the peg count text next to the slider control for board size.")]
+    public TMP_Text boardPegCountText;
+
+    [Tooltip("This controls the default size of a board, and holds the coloring information and styles for a specific board type. This will hold the currently selected preset, when presets are added so the player can choose. For now its up to the designer to set this.")]
+    public BoardPreset defaultPreset;
+
+
+    [Header("Play Mode Menus")]
+
+    [Tooltip("This is the panel that is shown while the player is playing the game.")]
+    public GameObject activePlayPanel;
+
+    [Tooltip("This is the panel shown during a pause from play mode.")]
+    public GameObject pausePanel;
+    
+    [Tooltip("The button to resume play from a pause state during play.")]
+    public GameObject resumeButtonGameObject;
+
+    [Tooltip("This is the text at the top of the pause screen. Show either paused, or game over text.")]
+    public TMP_Text statusText;
 
     bool isPaused = false;
     float saveTimeScale = 1f;
@@ -151,6 +181,9 @@ public class MainMenu_Controller : MonoBehaviour {
         Time.timeScale = saveTimeScale;
     }
 
+    /// <summary>
+    /// First menu screen. 
+    /// </summary>
     public void OnMainMenu()
     {
         pausePanel.SetActive(false);
@@ -163,6 +196,9 @@ public class MainMenu_Controller : MonoBehaviour {
         activePlayPanel.SetActive(false);
     }
 
+    /// <summary>
+    /// Hide the main panels.
+    /// </summary>
     public void HideMenu()
     {
         pausePanel.SetActive(false);
@@ -171,6 +207,9 @@ public class MainMenu_Controller : MonoBehaviour {
         activePlayPanel.SetActive(true);
     }
 
+    /// <summary>
+    /// When play is clicked, move to game setup panel
+    /// </summary>
     public void OnPlayClicked()
     {
         instructionsPanel.SetActive(false);
@@ -178,17 +217,26 @@ public class MainMenu_Controller : MonoBehaviour {
         gameSetupPanel.SetActive(true);
     }
 
+    /// <summary>
+    /// Load the play scene.
+    /// </summary>
     public void OnCreateBoard()
     {
         SceneManager.LoadScene("Default_Play");
     }
 
+    /// <summary>
+    /// Hook for resetting the gameboard
+    /// </summary>
     public void OnResetClicked()
     {
         GameManager.OnResetBoard_Static();
         TogglePause();
     }
 
+    /// <summary>
+    /// When the exit button is clicked. We close the game if in the main menu scene. If in play scene, we load the main menu scene.
+    /// </summary>
     public void OnExitClicked()
     {
         if(SceneManager.GetActiveScene().name == "Default_Menu")

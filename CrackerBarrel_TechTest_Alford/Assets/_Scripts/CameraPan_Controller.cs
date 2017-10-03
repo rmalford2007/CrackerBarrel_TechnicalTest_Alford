@@ -5,7 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class CameraPan_Controller : MonoBehaviour {
 
+    [Tooltip("Uses distance as the time value of the curve. Speed is the other value. This curve should be set so it returns faster and faster speeds the further the larger the distance.")]
     public AnimationCurve distanceDrivenSpeedCurve;
+    [Tooltip("Uses distance as the time. Speed is the other value. The larger the distance away from our zoom destination, the faster it should zoom.")]
     public AnimationCurve zoomSpeed;
 
     private Camera currentCamera;
@@ -80,6 +82,7 @@ public class CameraPan_Controller : MonoBehaviour {
         }
         if(Input.GetButton("Camera Pan"))
         {
+            //NOTE: This only works if the camera is orthographic. Needs to be reworked a bit to support perspective dragging.
             screenCurrentPosition = Input.mousePosition;
 
             dragDirection = (Camera.main.ScreenToWorldPoint(screenCurrentPosition) - Camera.main.ScreenToWorldPoint(screenGrabPosition)) * -1f; //for some reason if we don't multiply by a factor of 100, we lose some distance in the drag
@@ -93,6 +96,7 @@ public class CameraPan_Controller : MonoBehaviour {
         if(transform.position != screenDropPosition)
             transform.position = Vector3.MoveTowards(transform.position, screenDropPosition, Time.deltaTime * distanceDrivenSpeedCurve.Evaluate(Vector3.Distance(transform.position, screenDropPosition)));
 
+        //Sync the current Y position of the camera, with the othrographic size of the camera.
         if (transform.position.y != currentCamera.orthographicSize)
         {
             currentCamera.orthographicSize = Mathf.MoveTowards(currentCamera.orthographicSize, transform.position.y, Time.deltaTime * zoomSpeed.Evaluate(Mathf.Abs(currentCamera.orthographicSize - transform.position.y)));

@@ -10,15 +10,16 @@ public class GameBoard : MonoBehaviour {
     [HideInInspector]
     [SerializeField]
     private BoardPreset boardDisplayInfo; //Set to serialize so we can modify this in a prefab instead before we instantiate the prefab, also hide it so it can't be modified manually in inspector
-    private int baseRowPegCount = 5;
+    private int baseRowPegCount = 5; //this information is held in boardDisplayInfo, but copy it here on start. Controls the size of the triangle.
 
     [Range(.5f, 10f)]
     [Tooltip("The distance between each peg.")]
     public float pegSpacing = 1f; //the horizontal spacing between peg holes, this is peg center to peg center distance. Each level will be staggered over by half peg spacing
 
+    [Tooltip("The prefab that is instantiated for each slot on the game board.")]
     public GameObject pegSlotPrefab;
 
-    public event Int_Event GameOver;
+    public event Int_Event GameOver; //An event that broadcast gameover in addition to passing the int score as a parameter
 
     private bool boardChanged = false; //This bool should be set to true anytime a peg is jumped and is removed, to then check for game over conditions
     private float pegRowHeightChange = 1f; //The spacing to move each row of holes to. Should be half way between holes beneath them, but still pegSpacing away from other holes.
@@ -26,9 +27,11 @@ public class GameBoard : MonoBehaviour {
     private List<List<PegSlotData>> boardArrays; //This holds the initial data set of peg holes in the board. This should be used for initial connectivity of peg holes.
     private HashSet<PegSlotData> allPegSlots; //Hashed set of all slots for easier lookup
     private Dictionary<PegSlotData, PegSlot> pegTileGameObjects; //Dictionary that links the pegSlotData class to its appropriate world object that is spawned
+
+    //Ran out of time for optimization - throttle the size of the board to something smaller
     //private HashSet<PegSlotData> moveableSlots; //Hashed set of slots. Plan is to only have this contain slots that can still jump
 
-    private PegSlotData activePeg;
+    private PegSlotData activePeg; //Holds the peg that is being held by the mouse, or actively clicked for moving
 
     private bool isFreshStart = true; //this flag should inform the board that the player needs to choose a peg as the first empty space to start the game
 
@@ -260,6 +263,10 @@ public class GameBoard : MonoBehaviour {
         return false;
     }
 
+    /// <summary>
+    /// When a peg has any sort of mouse click on it, evaluate the current state
+    /// </summary>
+    /// <param name="selectedSlotData">The peg data that is being clicked</param>
     public void OnSelectPeg(PegSlotData selectedSlotData)
     {
         if (isFreshStart)
@@ -273,19 +280,24 @@ public class GameBoard : MonoBehaviour {
         }
         else
         {
-
+            //If drag n drop support is enabled or not
             if (GameManager.DragDropEnabled() && MouseDragPeg.Instance != null)
             {
                 DragDrop_Evaluate(selectedSlotData);
             }
             else
             {
+                //No drag n drop, do classic click to activate pegs, click again to drop them somewhere
                 ClickClick_Evaluate(selectedSlotData);
             }
             
         }
     }
 
+    /// <summary>
+    /// Drag n drop behavior for a peg being dropped somewhere
+    /// </summary>
+    /// <param name="selectedSlotData"></param>
     private void DragDrop_Evaluate(PegSlotData selectedSlotData)
     {
         //Drag n dropped on ourselves
@@ -338,7 +350,6 @@ public class GameBoard : MonoBehaviour {
             }
             else
             {
-                Debug.Log("Invalid direction");
                 activePeg.OnPegStopDrag();
                 activePeg = null;
 
@@ -347,6 +358,10 @@ public class GameBoard : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Multiple click interaction for a peg being clicked 
+    /// </summary>
+    /// <param name="selectedSlotData"></param>
     private void ClickClick_Evaluate(PegSlotData selectedSlotData)
     {
         //if there is a peg in the slot, activate it, but first deactivate the old peg that was active

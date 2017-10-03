@@ -4,6 +4,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// Provides text animation for a text object each time it is enabled from a disable state. Entry animation and persistent idle animation.
+/// </summary>
 [RequireComponent(typeof(TextMeshProUGUI))]
 [System.Serializable]
 public class TextSizeCurve_OnEnable : MonoBehaviour

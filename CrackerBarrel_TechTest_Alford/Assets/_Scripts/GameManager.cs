@@ -11,8 +11,12 @@ public class TransformFloatEvent : UnityEvent<Transform, float> { }
 public class GameManager : MonoBehaviour {
     public static GameManager Instance;
 
+    [Tooltip("The prefab for a board that needs to be created.")]
     public GameObject boardPrefab;
+    [Tooltip("The mouse drag prefab that is created when drag and drop interaction is enabled.")]
     public GameObject mouseObjectPrefab;
+
+    [Tooltip("The event that occurs right after a board is created. Passes the size of 1 side of the board with it.")]
     public TransformFloatEvent BoardCreated;
 
     private BoardPreset chosenBoardPreset;
@@ -71,6 +75,10 @@ public class GameManager : MonoBehaviour {
         OnCreateNewBoard(boardPrefab);
 	}
 
+    /// <summary>
+    /// Creates a passed in game board.
+    /// </summary>
+    /// <param name="boardPrefab"></param>
     void OnCreateNewBoard(GameObject boardPrefab)
     {
         if (boardPrefab != null)
@@ -93,12 +101,20 @@ public class GameManager : MonoBehaviour {
         return useDragDrop;
     }
 
+    /// <summary>
+    /// Broadcast the board creation event. Sends off the center of the board that is made, and the size of one side.
+    /// </summary>
+    /// <param name="eventTransform"></param>
+    /// <param name="eventFloat"></param>
     private void OnBoardCreated(Transform eventTransform, float eventFloat)
     {
         if (BoardCreated != null)
             BoardCreated.Invoke(eventTransform, eventFloat);
     }
     
+    /// <summary>
+    /// Reset the board if this manager exists
+    /// </summary>
     public static void OnResetBoard_Static()
     {
         if (Instance != null)
@@ -107,6 +123,10 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Checks if drag n drop is enabled.
+    /// </summary>
+    /// <returns></returns>
     public static bool DragDropEnabled()
     {
         if(Instance != null)
@@ -158,6 +178,9 @@ public class GameManager : MonoBehaviour {
         TogglePause(scoreText);
     }
 
+    /// <summary>
+    /// Destroys the current board in the world, then remakes the board.
+    /// </summary>
     private void ResetActiveBoard()
     {
         Destroy(activeBoardObject);
@@ -165,11 +188,19 @@ public class GameManager : MonoBehaviour {
         OnCreateNewBoard(boardPrefab);
     }
 
+    /// <summary>
+    /// Static hook to get the pause state. Hides the MainMenu controller from other game logic classes.
+    /// </summary>
+    /// <returns></returns>
     public static bool IsControlEnabled()
     {
         return !MainMenu_Controller.GetPause();
     }
 
+    /// <summary>
+    /// When the user hits escape during play, or if the game ends. We pause for both. If the game over state occurs, we pass the game over text with the score to the main menu controller.
+    /// </summary>
+    /// <param name="statusText"></param>
     private void TogglePause(string statusText="")
     {
         if(isGameOver)

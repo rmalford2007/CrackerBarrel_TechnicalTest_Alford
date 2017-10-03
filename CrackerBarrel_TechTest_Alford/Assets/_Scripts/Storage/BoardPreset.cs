@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This is a preset to control coloring and board sizes. There may be multiple presets the player can choose from at some point.
+/// </summary>
 [CreateAssetMenu(fileName = "Default_BoardPreset", menuName = "Create Board Preset", order = 1)]
 public class BoardPreset : ScriptableObject
 {
@@ -25,6 +28,10 @@ public class BoardPreset : ScriptableObject
         ROW_BY_ROW,
         SINGLE_COLOR
     }
+
+    /// <summary>
+    /// Initialize the scriptable object since there is no constructor.
+    /// </summary>
     public void OnEnable()
     {
         if (rowByRowData == null)
@@ -34,9 +41,14 @@ public class BoardPreset : ScriptableObject
 
     }
 
+    /// <summary>
+    /// Call the request color function, based on the currently chosen style. A game board should pass itself in here when it is ready to be colored. 
+    /// </summary>
+    /// <param name="boardArray"></param>
+    /// <param name="i"></param>
+    /// <param name="j"></param>
     public virtual void RequestColor(ref List<List<PegSlotData>> boardArray, int i, int j)
     {
-
         //When new styles are created add them to this switch
         switch(selectedStyle)
         {

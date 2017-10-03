@@ -1,10 +1,8 @@
 ﻿using UnityEditor;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
-using System.Linq;
 
+/// <summary>
+/// ScriptableObject editor for BoardPreset. This class hides serialized information from the user based on the style drop down enum. Only shows one style at a time.
+/// </summary>
 [CustomEditor(typeof(BoardPreset))]
 public class BoardPreset_Editor : Editor
 {
@@ -39,6 +37,7 @@ public class BoardPreset_Editor : Editor
             EditorGUILayout.PropertyField(serializedSingleColor, true);
         }
 
+        //Apply changes
         serializedObject.ApplyModifiedProperties();
     }
 
