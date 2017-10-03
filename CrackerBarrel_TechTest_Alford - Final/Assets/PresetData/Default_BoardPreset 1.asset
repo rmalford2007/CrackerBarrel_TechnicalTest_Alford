@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b7187e89b562314d8dd5b13ece8d27a, type: 3}
+  m_Name: Default_BoardPreset 1
+  m_EditorClassIdentifier: 
+  baseRowPegCount: 5
+  rowByRowData:
+    name: Next Row By Row
+    rowColors:
+    - {r: 0.75, g: 0.7279412, b: 0, a: 1}
+    - {r: 0, g: 0.7058823, b: 0.6435985, a: 1}
+    - {r: 0.5514706, g: 0.19586712, b: 0.4625697, a: 1}
+  singleData:
+    name: All Cyan
+    singleColor: {r: 0, g: 0.9558823, b: 1, a: 1}
+  selectedStyle: 1
