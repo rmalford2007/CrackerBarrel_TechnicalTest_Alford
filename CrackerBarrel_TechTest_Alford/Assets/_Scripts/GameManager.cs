@@ -42,7 +42,19 @@ public class GameManager : MonoBehaviour {
     }
     // Use this for initialization
     void Start () {
-        if(MainMenu_Controller.Instance != null)
+
+        //Get the mouse interaction the player wanted to use, chosen on the game setup screen
+        if (PlayerPrefs.HasKey("DragDrop"))
+        {
+            if (PlayerPrefs.GetInt("DragDrop") == 1)
+            {
+                useDragDrop = true;
+            }
+            else
+                useDragDrop = false;
+        }
+
+        if (MainMenu_Controller.Instance != null)
         {
             chosenBoardPreset = MainMenu_Controller.Instance.defaultPreset;
             GameBoard boardScript = boardPrefab.GetComponent<GameBoard>();

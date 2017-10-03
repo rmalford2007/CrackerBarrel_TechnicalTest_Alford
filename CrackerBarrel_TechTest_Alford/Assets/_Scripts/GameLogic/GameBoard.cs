@@ -170,6 +170,7 @@ public class GameBoard : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        
         Vector3 nextPosition = Vector3.zero;
         float zPos, xPos, yPos;
         if (boardArrays != null)
