@@ -99,6 +99,8 @@ public class PegSlot : MonoBehaviour {
             sourceSlotData.PegRemoved += PegRemoved;
             sourceSlotData.PegSelected += OnPegSlotSelected;
             sourceSlotData.PegDeselected += OnPegSlotDeselected;
+            sourceSlotData.PegStartDrag += OnPegStartDrag;
+            sourceSlotData.PegStopDrag += OnPegStopDrag;
         }
     }
 
@@ -113,6 +115,16 @@ public class PegSlot : MonoBehaviour {
         }
     }
 
+    void OnPegStartDrag()
+    {
+        PegAdded(null);
+    }
+
+    void OnPegStopDrag(PegData droppedMousePeg)
+    {
+        PegAdded(droppedMousePeg);
+    }
+
     void OnPegSlotSelected()
     {
         //When this slot is selected, only change coloring of the peg in this slot
@@ -120,12 +132,22 @@ public class PegSlot : MonoBehaviour {
         {
             pegRenderer.material.color = Color.green;
             currentMouseState = PegMouseState.SELECTED;
+            
         }
     }
 
     void OnPegSlotDeselected()
     {
+        //if (pegObject != null)
+        //{
+            
+        //    if (GameManager.DragDropEnabled())
+        //    {
+        //        if (sourceSlotData.HasPeg())
+        //            pegObject.SetActive(true);
+        //    }
 
+        //}
     }
 
 
@@ -167,6 +189,18 @@ public class PegSlot : MonoBehaviour {
         pegRenderer.material.color = tempColor;
     }
 
+    public void PegSlotClicked()
+    {
+        if (!GameManager.IsControlEnabled())
+            return;
+
+        //Tell subscribers we are clicking this tile
+        if (TileSelected != null)
+        {
+            TileSelected.Invoke(sourceSlotData);
+        }
+    }
+
     private void OnMouseOver()
     {
         //Leave early if controls are disabled
@@ -195,14 +229,7 @@ public class PegSlot : MonoBehaviour {
     private void OnMouseDown()
     {
         //Leave early if controls are disabled
-        if (!GameManager.IsControlEnabled())
-            return;
-
-        //Tell subscribers we are clicking this tile
-        if (TileSelected != null)
-        {
-            TileSelected.Invoke(sourceSlotData);
-        }
+        PegSlotClicked();
         //currentMouseState = MouseState.DRAG;
     }
 

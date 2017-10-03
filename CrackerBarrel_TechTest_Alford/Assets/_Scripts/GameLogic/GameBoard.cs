@@ -273,39 +273,113 @@ public class GameBoard : MonoBehaviour {
         else
         {
 
-            //if there is a peg in the slot, activate it, but first deactivate the old peg that was active
-            if (selectedSlotData != null && selectedSlotData.HasPeg())
+            if (GameManager.DragDropEnabled() && MouseDragPeg.Instance != null)
             {
-                if (activePeg != null)
-                {
-                    activePeg.Deselect();
-                }
-                activePeg = selectedSlotData;
-
-                if (selectedSlotData != null)
-                    selectedSlotData.Select();
-
+                DragDrop_Evaluate(selectedSlotData);
             }
-            else if (activePeg != null && selectedSlotData != null)
+            else
             {
-                //There is no peg in this selected slot, but we already have an active peg, this means we are dropping the peg in this slot
+                ClickClick_Evaluate(selectedSlotData);
+            }
+            
+        }
+    }
 
-                //Evaluate the jump direction to see if we can process the jump request
-                PegDirection jumpDirection = EvaluateDirection(activePeg, selectedSlotData);
-                //If this is a valid direction, verify that we can jump here
-                if (jumpDirection != PegDirection.INVALID)
+    private void DragDrop_Evaluate(PegSlotData selectedSlotData)
+    {
+        //Drag n dropped on ourselves
+        if(activePeg == selectedSlotData)
+        {
+            if(activePeg != null)
+            {
+                activePeg.OnPegStopDrag();
+                activePeg = null;
+                MouseDragPeg.Instance.ActivatePeg(null);
+            }
+        }
+        //Nothing selected, start dragging
+        else if(activePeg == null && selectedSlotData != null)
+        {
+            activePeg = selectedSlotData;
+            MouseDragPeg.Instance.ActivatePeg(activePeg);
+            activePeg.OnPegStartDrag();
+        }
+        else if (activePeg != null && selectedSlotData != null)
+        {
+            //There is no peg in this selected slot, but we already have an active peg, this means we are dropping the peg in this slot
+
+            //Evaluate the jump direction to see if we can process the jump request
+            PegDirection jumpDirection = EvaluateDirection(activePeg, selectedSlotData);
+            //If this is a valid direction, verify that we can jump here
+            if (jumpDirection != PegDirection.INVALID)
+            {
+                PegSlotData checkJumpSlot = CanJumpInDirection(activePeg, jumpDirection);
+
+                //Check the landing position in the jumpDirection, if the returned position is equal to our clicked position, then this is a valid jump
+                if (checkJumpSlot == selectedSlotData)
                 {
-                    PegSlotData checkJumpSlot = CanJumpInDirection(activePeg, jumpDirection);
-
-                    //Check the landing position in the jumpDirection, if the returned position is equal to our clicked position, then this is a valid jump
-                    if (checkJumpSlot == selectedSlotData)
+                    if (DoJumpInDirection(activePeg, jumpDirection))
                     {
-                        if (DoJumpInDirection(activePeg, jumpDirection))
-                        {
-                            //Finished jumping deselect the tiles we used
-                            activePeg.Deselect();
-                            activePeg = null;
-                        }
+                        //Finished jumping deselect the tiles we used
+                        activePeg.OnPegStopDrag();
+                        activePeg = null;
+
+                        MouseDragPeg.Instance.ActivatePeg(activePeg);
+                    }
+                }
+                else
+                {
+                    activePeg.OnPegStopDrag();
+                    activePeg = null;
+
+                    MouseDragPeg.Instance.ActivatePeg(activePeg);
+                }
+            }
+            else
+            {
+                Debug.Log("Invalid direction");
+                activePeg.OnPegStopDrag();
+                activePeg = null;
+
+                MouseDragPeg.Instance.ActivatePeg(activePeg);
+            }
+        }
+    }
+
+    private void ClickClick_Evaluate(PegSlotData selectedSlotData)
+    {
+        //if there is a peg in the slot, activate it, but first deactivate the old peg that was active
+        if (selectedSlotData != null && selectedSlotData.HasPeg())
+        {
+            if (activePeg != null)
+            {
+                activePeg.Deselect();
+            }
+            activePeg = selectedSlotData;
+
+            if (selectedSlotData != null)
+                selectedSlotData.Select();
+
+        }
+        else if (activePeg != null && selectedSlotData != null)
+        {
+            //There is no peg in this selected slot, but we already have an active peg, this means we are dropping the peg in this slot
+
+            //Evaluate the jump direction to see if we can process the jump request
+            PegDirection jumpDirection = EvaluateDirection(activePeg, selectedSlotData);
+            //If this is a valid direction, verify that we can jump here
+            if (jumpDirection != PegDirection.INVALID)
+            {
+                PegSlotData checkJumpSlot = CanJumpInDirection(activePeg, jumpDirection);
+
+                //Check the landing position in the jumpDirection, if the returned position is equal to our clicked position, then this is a valid jump
+                if (checkJumpSlot == selectedSlotData)
+                {
+                    if (DoJumpInDirection(activePeg, jumpDirection))
+                    {
+                        //Finished jumping deselect the tiles we used
+                        activePeg.Deselect();
+                        activePeg = null;
                     }
                 }
             }

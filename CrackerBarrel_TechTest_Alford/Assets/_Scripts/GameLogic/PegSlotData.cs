@@ -36,6 +36,8 @@ public class PegSlotData{
     public event Void_Event PegRemoved; //Whenever a peg is removed from this slot, call this event
     public event Void_Event PegSelected; //When this peg is selected
     public event Void_Event PegDeselected; //when this peg is de-selected
+    public event Void_Event PegStartDrag;
+    public event PegData_Event PegStopDrag;
 
 	public PegSlotData()
     {
@@ -280,5 +282,17 @@ public class PegSlotData{
         {
             PegRemoved.Invoke();
         }
+    }
+
+    public void OnPegStartDrag()
+    {
+        if (PegStartDrag != null)
+            PegStartDrag.Invoke();
+    }
+
+    public void OnPegStopDrag()
+    {
+        if (PegStopDrag != null)
+            PegStopDrag.Invoke(pegInSlot);
     }
 }

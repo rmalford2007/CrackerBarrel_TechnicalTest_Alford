@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour {
     public static GameManager Instance;
 
     public GameObject boardPrefab;
-
+    public GameObject mouseObjectPrefab;
     public TransformFloatEvent BoardCreated;
 
     private BoardPreset chosenBoardPreset;
@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour {
     private GameBoard activeBoardScript;
 
     private bool isGameOver = false;
-
+    public bool useDragDrop = true;
     private void Awake()
     {
         if(Instance == null)
@@ -52,6 +52,9 @@ public class GameManager : MonoBehaviour {
             }
             else
                 Debug.Log("Unable to set data in prefab instance.");
+
+            if(mouseObjectPrefab != null)
+                Instantiate(mouseObjectPrefab);
         }
         OnCreateNewBoard(boardPrefab);
 	}
@@ -73,18 +76,32 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    public bool GetDragDropFlag()
+    {
+        return useDragDrop;
+    }
+
     private void OnBoardCreated(Transform eventTransform, float eventFloat)
     {
         if (BoardCreated != null)
             BoardCreated.Invoke(eventTransform, eventFloat);
     }
-
+    
     public static void OnResetBoard_Static()
     {
-        if (GameManager.Instance != null)
+        if (Instance != null)
         {
             Instance.OnResetBoard();
         }
+    }
+
+    public static bool DragDropEnabled()
+    {
+        if(Instance != null)
+        {
+            return Instance.GetDragDropFlag();
+        }
+        return false;
     }
 
     public void OnResetBoard()
