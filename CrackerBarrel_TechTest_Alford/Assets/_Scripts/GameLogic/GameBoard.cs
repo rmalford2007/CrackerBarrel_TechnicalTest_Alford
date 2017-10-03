@@ -60,6 +60,11 @@ public class GameBoard : MonoBehaviour {
         return baseRowPegCount * pegSpacing;
     }
 
+    private void ColorPegs()
+    {
+        boardDisplayInfo.RequestColor(ref boardArrays, 0, 0);
+    }
+
     /// <summary>
     /// Initializes the game board data to use a triangle with base row holes specified by pegCount. Note - This doesn't create game objects, only the data side that the game objects will spawn from later.
     /// </summary>
@@ -213,7 +218,7 @@ public class GameBoard : MonoBehaviour {
             //Activate StartPegSelection to choose the first peg to remove for board setup
 
             //HARDCODE - Remove first peg to start game (top middle for now) - hardcode classic to see if it works
-            
+            ColorPegs();
         }
 
 

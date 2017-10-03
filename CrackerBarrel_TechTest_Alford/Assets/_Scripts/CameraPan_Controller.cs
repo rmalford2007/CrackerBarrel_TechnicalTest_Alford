@@ -85,6 +85,8 @@ public class CameraPan_Controller : MonoBehaviour {
             dragDirection = (Camera.main.ScreenToWorldPoint(screenCurrentPosition) - Camera.main.ScreenToWorldPoint(screenGrabPosition)) * -1f; //for some reason if we don't multiply by a factor of 100, we lose some distance in the drag
             
             screenDropPosition = startingCameraPosition + dragDirection;
+
+            //Make sure the eleveation is the same
             screenDropPosition.y = startingCameraPosition.y;
         }
 

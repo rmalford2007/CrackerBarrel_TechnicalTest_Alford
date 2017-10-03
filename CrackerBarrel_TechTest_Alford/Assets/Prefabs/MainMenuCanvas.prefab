@@ -1875,7 +1875,7 @@ MonoBehaviour:
   gameSetupPanel: {fileID: 1122313177006294}
   statusText: {fileID: 114814702627419952}
   boardPegCountText: {fileID: 114679581874797904}
-  defaultPreset: {fileID: 11400000, guid: 6463e2898ad70894a8a3c93d66bd27d6, type: 2}
+  defaultPreset: {fileID: 11400000, guid: d9f63b0d011a94b42b08fba8e5007afc, type: 2}
   boardSizeSlider: {fileID: 114257569181368884}
 --- !u!114 &114602095092867262
 MonoBehaviour:
